@@ -1,6 +1,6 @@
 #+TITLE: Ruby Reference Sheet
 # SUBTITLE: /Everything is an object!/
-#+MACRO: blurb  Reference of basic commands to get comfortable with Ruby ---Pure OOP!
+#+MACRO: blurb  Reference of basic commands to get comfortable with Ruby ---Modern and nearly pure OOP!
 #+AUTHOR: [[http://www.cas.mcmaster.ca/~alhassm/][Musa Al-hassy]]
 #+EMAIL: alhassy@gmail.com
 #+INCLUDE: CheatSheet/CheatSheetSetup.org
@@ -24,6 +24,7 @@
 #+LATEX_HEADER: \newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
 #+LATEX_HEADER: \newunicodechar{𝑬}{\ensuremath{\mathbf{E}}}
 #+LATEX_HEADER: \newunicodechar{∋}{\ensuremath{\ni}}
+#+LATEX_HEADER: \newunicodechar{₋}{\ensuremath{_{-}}}
 
 * COMMENT Contents :TOC:QUOTE:ignore:
 #+BEGIN_QUOTE
@@ -113,6 +114,28 @@ RUBY_VERSION
   and
   [[https://wikemacs.org/wiki/Ruby][Ruby with Emacs]]
 
+* Administrivia
+
+  #+latex: \hspace{-1.3em}
+  ⇒ Ruby has a interactive command line. In terminal, type ~irb~.
+
+  ⇒ To find your Ruby version, type ~ruby --version~; or in a Ruby script:
+    #+BEGIN_SRC ruby
+RUBY_VERSION # ⇒ 2.3.7
+
+# In general, use backtics `⋯` to call shell commands
+`ls -ll ~` # ⇒ My home directory's contents!
+#+END_SRC
+
+⇒ Single line comments marked by ~#~.
+@@latex:\newline{\color{white}.}\quad\,@@ Multi-line comments enclosed by ~=begin~ and ~=end~.
+
+⇒ Newline or semicolon is used to separate expressions; other whitespace is irrelevant.
+
+⇒ Variables don't have types, values do.
+   - /The type of a variable is the class it belongs to./
+   - Variables do not need declarations.
+
 * Everything is an object!
 
 #+latex: \hspace{-1.3em}
@@ -147,8 +170,14 @@ Everything has a value ---possibly ~nil~.
 
 #+latex: \hspace{-1.3em}
   Multiple ways to define anonymous functions; application can be a number of ways too.
-  #
-  #+begin_parallel org
+
+Parenthesises are optional unless there's ambiguity.
+
+  + The value of the last statement is the ‘return value’.
+  + Function application is right-associative.
+  + Arguments are passed in with commas.
+
+#+begin_parallel org
 #+BEGIN_SRC ruby
 fst = lambda { |x, y| x}
 fst.call(1, 2)   # ⇒ 1
@@ -183,21 +212,32 @@ sum 1, 22, with: 3  # ⇒ 6
 
 #+end_parallel
 
-Parenthesises are optional unless there's ambiguity.
-  + The value of the last statement is the ‘return value’.
-  + Function application is right-associative.
-  + Arguments are passed in with commas.
 
 Notice that the use of ‘=’ in an argument list to mark arguments as *optional* with default values.
 We may use *keyword* arguments, by suffixing a colon with an optional default value
 to mark the argument as optional; e.g., omitting the ~0~ after ~with:~ makes it a necessary (keyword) argument.
+[[https://stackoverflow.com/questions/89650/how-do-you-pass-arguments-to-define-method/11098487#11098487][Such]] may happen in ~|⋯|~ for arguments to blocks.
+
+:Example:
+#+BEGIN_SRC ruby
+define_method(:foo) do |x = 0, y: 1| "#{x} and #{y}" end
+
+foo 11 , y: 22 # ⇒ 11 and 22
+
+define_method(:woah) do |*z| z end
+woah x: "hi" , y: "bye", z: "noice" # ⇒ { :x=>hi, :y=>bye, :z=>noice }
+#+END_SRC
+
+:End:
 
 Convention:
 Predicate names end in a ~?~; destructive function names end in ~!~.
+\newline
+That is, methods ending in ~!~ change a variable's value.
   # - These usually come in pairs, with and without the bang, to indicate
   #   those that alter the given arguments and those that return a new changed version.
 
-#+latex: \columnbreak
+# latex: \columnbreak
 
 *Higher-order*: We use ~&~ to indicate that an argument is a function.
 #+BEGIN_SRC ruby
@@ -219,6 +259,9 @@ sum′(1, 2) do end # ⇒ nil + nil, but no addition on nil: CRASHES!
 sum′(1, 2) { 7 }  # ⇒ 14; Constanly return 7, ignoring arguments; 7 + 7 ≈ 14
 #+END_SRC
 
+*Note*: A subtle difference between ~do/end~ and ~{/}~ is that the latter binds tightly to the closest method;
+e.g., ~puts x.y { z } ≈ puts (x.y do z end)~.
+
 Variadic number of arguments:
 #+BEGIN_SRC ruby
 def sum″ (*lots_o_stuff) toto = 0; lots_o_stuff.each{ |e| toto += e}; toto end
@@ -226,7 +269,7 @@ sum″ 2 , 4 , 6 , 7  #⇒ 19
 
 # Turn a list into an argument tuple using “splat”, ‘*’
 nums = [2, 4, 6, 7, 8, 9]
-sum″ nums  #⇒ Error: Array can't be coerced into number
+# sum″ nums  #⇒ Error: Array can't be coerced into number
 sum″ *nums.first(4)  #⇒ 19
 #+END_SRC
 
@@ -239,16 +282,43 @@ def w; "func" end
 "w: #{w}, but w(): #{w()}" # ⇒ w: var, but w(): func
 #+END_SRC
 
+How to furnish a single entity with features?
+/“Singleton methods/classes”!/ You can attach methods to existing names whenever you like.
+(Instance vars are ~nil~ by default.)
 
-“Singleton methods”: You can attach methods to existing names whenever you like.
 #+BEGIN_SRC ruby
 x = "ni"
-def x.upcase; "The knights who say #{self}" end
-x.upcase # ⇒ The knights who say ni
+def x.upcase; "Knights who say #{self} × #{@count = (@count || 0) + 1}" end
+x.upcase # ⇒ Knights who say ni × 1
+x.upcase # ⇒ Knights who say ni × 2
 
 # Other items are unaffected.
 "ni".upcase  # ⇒ NI, the usual String capitalisation method
 #+END_SRC
+
+In general,
+the syntax ~class << x ⋯ end~ will attach /all usual class contents/ “⋯” /only/ for the entity
+~x~. ( Undefined instance variables are always ~nil~. )
+
+:Example:
+#+BEGIN_SRC ruby
+x = "ni"
+class << x
+  attr_accessor :neato
+  def noice
+    @neato = 1
+    "Woah!: " + self
+  end
+end
+
+x.noice
+x.neato
+#+END_SRC
+
+#+RESULTS:
+: 1
+
+:End:
 
 We can redfine any method; including the one that handles missing method issues.
 #+BEGIN_SRC ruby
@@ -257,6 +327,12 @@ x.speak # ⇒ Error: No method ‘speak’
 def method_missing(id, *args) end
 x.speak # ⇒ nil
 #+END_SRC
+
+A “ghost method” is the name of the technique to dynamically a create a method
+by overriding ~method_missing~. E.g., [[https://gist.github.com/Integralist/a29212a8eb10bc8154b7#file-04-dynamic-proxies-rb][by forwarding]] ghosts ~get_x~ as calls ~get(:x)~
+/with/ extra logic about them.
+# Exercise: Make a class ~Roman~ that only overrides only ~method_missing~
+# so that ~Roman.XL~ and ~Roman.XXVI~ yields 40 and 26, respectively.
 
 Operators are syntactic sugar and can be overrided.
 This includes the arithmetical ones, and ~[]~, ~[]=~; and unary ± via ~+@~, ~-@~.
@@ -276,7 +352,7 @@ summing 1, 2, 3  # ⇒ 6
 #+END_SRC
  #+end_parallel
 
-#+LATEX: \ifnum\cheatsheetcols=1  \else \vspace{-4em} \fi
+# LATEX: \ifnum\cheatsheetcols=1  \else \vspace{-4em} \fi
 ** COMMENT Prickly Parts
 #+BEGIN_SRC ruby
 ok₀ = lambda {|x| x}
@@ -284,6 +360,50 @@ def ok₁ x; x end
 ok₀.class            # ⇒ Proc
 (method :ok₁).class  # ⇒ Method
 #+END_SRC
+
+* Methods as Values
+
+#+latex: \hspace{-1.3em}
+Method declarations are expressions:
+A method definition returns the method's name as a symbol.
+#+BEGIN_SRC ruby
+def woah; "hello" end # ⇒ :woah
+
+woah′ = method(:woah) # ⇒ #<Method: Object#woah>
+
+woah′.call # ⇒ hello
+
+method(:woah).call # ⇒ hello
+#+END_SRC
+
+Notice that using the operation ~method~ we can obtain the method associated with a symbol.
+
+Likewise, <<<~define_method~>>> takes a name and a block, and ties those together to make a method.
+It overrides any existing method having that name.
+
+The following is known as “decoration” or “advice”!
+
+Besides decorating a function call to print a trace like below,
+it can be used to add extra behaviour such as [[https://dev.to/baweaver/decorating-ruby-part-1-symbol-method-decoration-4po2][caching]] expensive calls,
+[[https://relishapp.com/rspec/rspec-mocks/docs][mocking]] entities for testing, or doing a form of [[https://alhassy.github.io/TypedLisp/#typing-via-macros][typing]]
+( [[http://www.randomhacks.net/2005/12/03/why-ruby-is-an-acceptable-lisp/][Ruby is a Lisp]] ).
+
+#+BEGIN_SRC ruby
+define_method(:ni) {|x| x}
+
+def notify(method_name)
+  orginal = method(method_name)
+  define_method(method_name) { |*args, &blk|
+    p "#{method_name} running ... got #{orginal.call(*args, &blk)}"} end
+
+notify def no_op (x) x end
+
+no_op 1 # ⇒ no_op running ... got 1
+
+# “x.singleton_class.include(M)” to wholesale attach module M's contents to x.
+#+END_SRC
+
+See [[https://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Method_Calls][here]] for a nifty article on methods in Ruby.
 
 * Variables & Assignment
 #+latex: \hspace{-1.3em}
@@ -298,18 +418,33 @@ x = y = z = 2
 
 # Since everything has a value, “y = 2” ⇒ 2
 x = 1, y = 2  # Whence, x gets “[1, 2]”!
+# Arrays are comma separated values; don't need [ and ]
 
 x = 1; y = 2  # This is sequential assignment.
 
 # If LHS as has many pieces as RHS, then we have simultenous assignment.
 x , y = y , x # E.g., this is swap
 
-# Destrucuring with “splat” ‘*’
+# Destructuring with “splat” ‘*’
 a , b, *more = [1, 2, 3, 4, 5] # ⇒ a ≈ 1; b ≈ 2; c ≈ [3, 4, 5]
+first, *middle, last = [1, 2, 3, 4, 5] # ⇒ first ≈ 1; middle ≈ [2, 3, 4]; last = 5
+last
 
 # Without splat, you only get the head element!
 a , b, c = [1, 2, 3, 4, 5] # ⇒ a ≈ 1; b ≈ 2; c ≈ 3
+#+END_SRC
 
+“Assign if undefined”: ~x ||= e~ yields ~x~ if it's a defined name, and is ~x = e~ otherwise.
+This is useful for having local variables, as in loops or terse function bodies.
+#+BEGIN_SRC ruby :results value
+nope rescue "“nope” is not defined."
+# nope ||= 1 # ⇒ nope = 1
+# nope ||= 2 # ⇒ 1, since “nope” is defined
+#+END_SRC
+Notice: ~B rescue R~ ≈ Perform code ~B~, if it crashes perform code ~R~.
+
+** COMMENT Scope
+#+BEGIN_SRC ruby :results value
 # Variable scope is determined by name decoration.
 # Constants are names that begin with a captial letter.
 $a = 2; @a = 3; @aa = 4; A = 5
@@ -317,34 +452,62 @@ $a = 2; @a = 3; @aa = 4; A = 5
 # ⇒ [local-variable , global-variable , instance-variable , hline, constant]
 #+END_SRC
 
-* Strings
+* Strings and ~%~-Notation
 
 #+latex: \hspace{-1.3em}
 Single quotes are for string literals,
     whereas double quotes are for string evaluation, [[https://www.google.com/search?q=interpolation&oq=interpolation&aqs=chrome..69i57j0l5.724j0j7&sourceid=chrome&ie=UTF-8][‘interpolation’]].
+    Strings may span multiple lines.
     #
 #+begin_parallel org
 #+BEGIN_SRC ruby
-you = 12         # ⇒ 12
-"Me and #{you}"  # ⇒ Me and 12
-'Me and #{you}'  # ⇒ Me and #{you}
+you = 12
+# ⇒ 12
 
-# String catenation
-"This " + "That"
-"This " << "That"
+"Me and \n #{you}"
+# ⇒ Me and ⟪newline here⟫ 12
 
-# “to string” function
+'Me and \n #{you}'
+# ⇒ Me and \n #{you}
+
+# “to string” and catenation
 "hello " + 23.to_s  # ⇒ hello 23
 
 # String powers
-"hello " * 3 # ⇒ hello hello hello
+"hello " * 3
+# ⇒ hello hello hello
 
 # Print with a newline
-puts "Bye #{you}"  # ⇒ Bye 12 ⇒ nil
+puts "Bye #{you}"
+# ⇒ Bye 12 ⇒ nil
+
+# printf-style interpolation
+"%s or %s" % ["this" , "that"]
+it = %w(this that); "%s or %s" % it
 #+END_SRC
+
 #+end_parallel
 
-#+latex: \vspace{-2em}
+Strings are essentially arrays of characters, and so array operations work as expected!
+
+There is a Perl-inspired way to quote strings, by using % along with any
+non-alpha-numeric character acting as the quotation delimiter.
+Now only the new delimiter needs to be escaped; e.g., ~"~ doesn't need escape.
+
+A type modifier can appear after the ~%~ :
+  ~q~ for strings, ~r~ for regexp, ~i~ symbol array, ~w~ string array, ~x~ for shell command,
+  and ~s~ symbol. Besides ~x, s~, the rest can be capitalised to allow interpolation.
+
+#+BEGIN_SRC ruby
+%{ woah "there" #{1 + 2} }  # ⇒ "woah \"there\" 3"
+%w[ woah "there" #{1 + 2} ] # ⇒ ["woah", "\"there\"", "\#{1", "+", "2}"]
+%W[ woah "there" #{1 + 2} ] # ⇒ ["woah", "\"there\"", "3"]
+%i( woah "there" )          # ⇒ [ :woah, :"there"]
+#+END_SRC
+
+See [[https://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#The_%25_Notation][here]] for more on the %-notation.
+
+# latex: \vspace{-2em}
 
 * Booleans
 
@@ -352,30 +515,68 @@ puts "Bye #{you}"  # ⇒ Bye 12 ⇒ nil
  ~false, nil~ are both considered /false/; all else is considered /true/.
 + Expected relations: ~==, !=, !, &&, ||, <, >, <=, >=~
 + ~x <=> y~ returns 1 if ~x~ is larger, 0 if equal, and -1 otherwise.
++ “Safe navigation operator”: ~x&.y ≈ (x && x.y)~.
 + ~and, or~ are the usual logical operators but with lower precedence.
 + They're used for control flow; e.g.,
         ~s₀ and s₁ and ⋯ and sₙ~ does each of the ~sᵢ~ until one of them is false.
 
-* spacing COMMENT break                                                      :ignore:
+:Example:
+#+BEGIN_SRC ruby
+x = "nice"
+x.upcase
+
+y = nil
+# y.upcase # ⇒ crash, undefined method
+y&.upcase # ⇒ nil ^_^
+#+END_SRC
+
+#+RESULTS:
+: nil
+
+:End:
+
+Since [[http://www.randomhacks.net/2005/12/03/why-ruby-is-an-acceptable-lisp/][Ruby is a Lisp]], it comes with [[http://rubylearning.com/blog/2010/11/17/does-ruby-have-too-many-equality-tests/][many equality operations]]; including ~=~~ for regexps.
+
+
+* spacing break                                                      :ignore:
 #+latex: \columnbreak
 * Arrays
 
 #+latex: \hspace{-1.3em}
-  Arrays are heterogeneous and 0-indexed.
-#+BEGIN_SRC ruby :results output
-array = [1, "two", :three, [:a, "b", 12]]
+  Arrays are heterogeneous, 0-indexed, and [ brackets ] are optional.
+#+BEGIN_SRC ruby
+array   = [1, "two", :three, [:a, "b", 12]]
+again   =  1, "two", :three, [:a, "b", 12]
 #+END_SRC
 
 Indexing: ~x[±i]~ ≈ “value if i < x.length else nil”
 ~x[i]~ ⇒ The /i-th/ element from the start; ~x[-i]~ ⇒ /i-th/ element from the end.
-#+BEGIN_SRC ruby :results output
+#+BEGIN_SRC ruby
 array[1]     # ⇒ "two"
 array[-1][0] # ⇒ :a
 #+END_SRC
 
-Inclusive Subsegment using ~..~, excluding upper index using ~,~.
- | ~x[0..2] ≈ x[0, 3] ≈ [x₀, x₁, x₂]~ |
- | Syntactic sugar: ~x[i] ≈ x.[] i~   |
+Segments and ranges:
+ | ~x[m, k] ≈ [xₘ, xₘ₊₁, …, xₘ₊ₖ₋₁]~                         |
+ | ~x[m..n] ≈ [xₘ, xₘ₊₁, …, xₙ]~ if $m ≤ n$ and ~[]~ otherwise |
+ | ~x[m...n] ≈ x[m..n-1]~ ---to exclude last value           |
+ | ~a[i..j] = r~ ⇒ ~a ≈ a[0, i] + *r + a[j, a.length]~         |
+ | Syntactic sugar: ~x[i] ≈ x.[] i~                          |
+#
+Where ~*r~ is array coercion:
+Besides splicing, <<<splat>>> is also used to coerce values into arrays;
+some objects, such as numbers, don't have a ~to_a~ method, so this makes up for it.
+#+BEGIN_SRC ruby
+a = *1      # ⇒ [1]
+a = *nil    # ⇒ []
+a = *"Hi"   # ⇒ ["Hi"]
+a = *(1..3) # ⇒ [1, 2, 3]
+a = *[1,2]  # ⇒ [1, 2]
+
+# Non-symmetric multiplication; x * y ≈ x.*(y)
+[1,2,3] * 2    # ⇒ [1,2,3,1,2,3]
+[1,2,3] * "; " # ⇒ "1; 2; 3"
+#+END_SRC
 
 As always, learn more with ~array.methods~ to see, for example,
 ~first, last, reverse, push and << are both “snoc”, include? “∋”, map~.
@@ -392,6 +593,15 @@ x.reverse!     # x has changed!
 x.each do |e| puts e.to_s end
 #+END_SRC
 
+Catenation ~+~, union ~|~, difference ~-~, intersection ~&~.
+\newline
+[[https://itnext.io/a-ruby-cheatsheet-for-arrays-c8e5275155b5][Here]] is a cheatsheet of array operations in Ruby.
+
+What Haskell calls ~foldl~, Ruby calls ~inject~; \newline e.g.,
+~xs.inject(0) do |sofar, x| sofar + x end~ yields the sum of ~xs~.
+
+* spacing break                                                      :ignore:
+#+latex: \columnbreak
 * Symbols
 
 #+latex: \hspace{-1.3em}
@@ -408,6 +618,7 @@ x.each do |e| puts e.to_s end
 #+END_SRC
 #+end_parallel
 
+#+latex: \vspace{-1em}
 Strings occupy different locations in memory
 even though they are observationally indistinguishable.
 In contrast, all occurrences of a symbol refer to the same memory location.
@@ -417,24 +628,82 @@ In contrast, all occurrences of a symbol refer to the same memory location.
 "this".object_id == "this".object_id # ⇒ false
 #+END_SRC
 
+
+#+latex: \vspace{-0.5em}
 * Control Flow
 
 #+latex: \hspace{-1.3em}
 We may omit ~then~ by using ~;~ or a newline, and
 may contract ~else if~ into ~elsif~.
 #+BEGIN_SRC ruby
-if :test₁ then :this else if :test₂ then :that end  end
+# Let 𝒞 ∈ {if, unless}
+𝒞 :test₁ then :this else :that end
+this 𝒞 test  ≈  𝒞 test then this else nil end
 #+END_SRC
 #+BEGIN_SRC ruby :results output
   (1..5).each do |e| puts e.to_s end
+≈ 1 .upto 5 do |e| puts e end
+≈ 5 .downto 1 do |e| puts 6 - e end
 ≈ for e in 1..5 do puts e.to_s end
 ≈ e = 1; while e <= 5 do puts e.to_s; e += 1 end
+≈ e = 1; begin puts e.to_s; e += 1 end until e > 5
+≈ e = 1; loop do puts e.to_s; e += 1; break if e > 5 end
 #+END_SRC
 
-* Hashes
+Just as ~break~ exits a loop, ~next~ continues to the next iteration,
+and ~redo~ restarts at the beginning of an iteration.
 
+There's also times for repeating a block a number of times, and step for
+traversing over every /n/-th element of a collection.
+#+BEGIN_SRC ruby :results output
+n.times   S ≈ (1..n).each S
+c.step(n) S ≈ c.each_with_index {|val, indx| S.call(val) if indx % n == 0}
+#+END_SRC
+:Example:
+#+BEGIN_SRC ruby :results output
+('a'..'z').step(3) do |e| puts e end
+puts " --- indeed ---"
+('a'..'z').each_with_index do |val, index| puts val if index % 3 == 0 end
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+a
+d
+g
+j
+m
+p
+s
+v
+y
+ --- indeed ---
+a
+d
+g
+j
+m
+p
+s
+v
+y
+#+end_example
+:End:
+
+See [[https://www.thegeekstuff.com/2018/05/ruby-loop-examples/][here]] for a host of loop examples.
+
+
+#+latex: \vspace{-1em}
+* spacing COMMENT break                                                      :ignore:
+#+latex: \columnbreak
+* Hashes
 #+latex: \hspace{-1.3em}
- Finite functions, or ‘dictionaries’ of key-value pairs.
+ Also known as finite functions, or ‘dictionaries’ of key-value pairs
+ ---a dictionary matches words with their definitions.
+
+ Collections are buckets for objects; hashes are labelled buckets:
+   The label is the key and the value is the object.
+ Thus, hashes are like objects of classes, where the keys are slots that are tied to values.
 
 #+BEGIN_SRC ruby :results output
 hash = { "jasim" => :farm, :qasim => "hockey", 12 => true}
@@ -443,18 +712,60 @@ hash.keys     # ⇒ ["jasim", :qasim, 12]
 hash["jasim"] # ⇒ :farm
 hash[12]      # ⇒ true
 hash[:nope]   # ⇒ nil
+#+END_SRC
 
-# Simpler syntax when all keys are symbols.
+Simpler syntax when all keys are symbols.
+#+BEGIN_SRC ruby :results output
 oh = {this: 12, that: "nope", and: :yup}
 oh.keys  #⇒ [:this, :that, :and]
 oh[:and] # ⇒ :yup
 
-# As always, learn more with
-# hash.methods  ⇒ keys, values, key?, value?, each, map, count
-
 # Traverse an array using “each” and “each_with_index”.
 oh.each do |k, v| puts k.to_s end
 #+END_SRC
+
+As always, learn more with
+~Hash.methods~  to get ~keys, values, key?, value?, each, map, count, ...~
+and even the “safe navigation operator” ~dig~:
+~h.dig(:x, :y, :z) ≈ h[:x] && h[:x][:y] && h[:x][:y][:z]~.
+
+** Variadic keyword arguments
+We may pass in any number of keyword arguments using ~**~.
+#+BEGIN_SRC ruby
+def woah (**z) z[:name] end
+
+woah name: "Jasim" , work: "Farm" #⇒ Jasim
+#+END_SRC
+
+** Rose Trees
+Hashes can be used to model (rose) trees:
+#+BEGIN_SRC ruby
+family = {grandpa: {dad:  {child1: nil, child2: nil},
+                   uncle: {child3: nil, child4: nil},
+                   scar:  nil}}
+
+# Depths of deepest node.
+def height t
+    if not t
+    then 0
+    else t.map{|k, v| height v}.map{|e| e + 1}.max
+    end end
+
+height family # ⇒ 3
+#+END_SRC
+
+** COMMENT Mimicking keyword args
+Hashes don't need braces when arguments to a function; we can mimic keyword args this way!
+#+BEGIN_SRC ruby
+def sum them
+  them[:first] + them[:second] end
+
+sum( :second => 3, :first => 1 )
+sum( first: 12, second: 12 )
+#+END_SRC
+
+#+RESULTS:
+: 24
 
 * Classes
   :Important_Remark:
@@ -469,8 +780,52 @@ oh.each do |k, v| puts k.to_s end
   :End:
 
 #+latex: \hspace{-1.3em}
-Instance fields are any ~@~ prefixed variables.
-  + Class fields, which are shared by all instances, are any ~@@~ prefixed variables.
+/<<<Classes>>> are labelled product types: They denote values of tuples with named components./
+Classes are to objects as cookie cutters (templates) are to cookies.
+
+** Modifiers: ~public, private, protected~
+
+Modifiers: ~public, private, protected~
+
+  + Everything is public by default.
+  + One a modifier is declared, by itself on its own line, it remains in effect
+    until another modifier is declared.
+  + Public  ⇒ Inherited by children and can be used without any constraints.
+  + Protected ⇒ Inherited by children, and may be occur freely /anywhere/ in the class definition;
+    such as being called on other instances of the same class.
+  + Private ⇒ Can only occur stand-alone in the class definition.
+
+  These are forms of advice.
+
+** Even classes are objects!
+~Class~ is also an object in Ruby.
+
+#+BEGIN_SRC ruby
+  class C ⟪contents⟫ end
+≈
+  C = Class.new do ⟪contents⟫ end
+  #+END_SRC
+
+:Example:
+#+BEGIN_SRC ruby :results output
+C = Class.new do attr_accessor :hi end
+
+c = C.new
+c.hi = 12
+puts "#{c.hi} is neato"
+#+END_SRC
+:End:
+
+** Example: Person Class
+
+/Instance attributes/ are variables such that each object has a different copy;
+their names must start with ~@~ ---“at” for “at”tribute.
+# Changing one variable in one object doesn't change that variable's value in another object.
+
+/Class attributes/ are variables that are mutually shared by all objects;
+their names must start with ~@@~ ---“at all” ≈ attribute for all.
+
+~self~ refers to the entity being defined as a whole; ~name~ refers to the entities string name.
 #+BEGIN_SRC ruby :tangle test.rb :results output
 class Person
 
@@ -488,8 +843,10 @@ class Person
     @@world
   end
 
-  # Class methods use “self”; they can only be called by the class, not by instances.
-  def self.flood; puts "A great flood has killed all of humanity"; @@world = 0 end
+  # Class methods use “self”;
+  # they can only be called by the class, not by instances.
+  def self.flood
+    puts "A great flood has killed all of humanity"; @@world = 0 end
 
 end
 
@@ -503,61 +860,190 @@ Person.flood
 puts "There are #{qasim.world} people here!"
 #+END_SRC
 
-** Modifiers: ~public, private, protected~
++ See here to learn more about the [[https://blog.appsignal.com/2018/08/07/ruby-magic-changing-the-way-ruby-creates-objects.html][new]] /method/.
 
-Modifiers: ~public, private, protected~
-
-  + Everything is public by default.
-  + One a modifier is declared, by itself on its own line, it remains in effect
-    until another modifier is declared.
-  + Public  ⇒ Inherited by children and can be used without any constraints.
-  + Protected ⇒ Inherited by children, and may be occur freely /anywhere/ in the class definition;
-    such as being called on other instances of the same class.
-  + Private ⇒ Can only occur stand-alone in the class definition.
+Using ~define_method~ along with
+  ~instance_variable_set("@#namehere", value)~ and ~instance_variable_get("@#namehere")~,
+  we can elegantly form a number of related methods from a list of names; e.g.,
+  recall ~attr_accessor~. Whence *design patterns become library methods!*
 
 ** Classes are open!
-Classes are open!
+# Classes are open!
 
+/In Ruby, just as methods can be overriden and advised, classes are open: They can be extended anytime./
+This is akin to C# extension methods or Haskell's typeclasses.
+#+BEGIN_SRC ruby :results output
+# Open up existing class and add a method.
+class Fixnum
+  def my_times; self.downto 1 do yield end end
+end
+
+3.my_times do puts "neato" end # ⇒ Prints “neato” thrice
+#+END_SRC
+
+#+latex: \columnbreak
 + We can freely add and alter class continents long after a class is defined.
 + We may even alter core classes.
 + Useful to extend classes with new functionality.
 
-** Even classes are objects!
-~Class~ is also an object in Ruby.
-
-#+BEGIN_SRC ruby
-  class C ⟪contents⟫ end
-≈
-  C = Class.new do ⟪contents⟫ end
-  #+END_SRC
-
-#+BEGIN_SRC ruby :results output
-C = Class.new do attr_accessor :hi end
-
-c = C.new
-c.hi = 12
-puts "#{c.hi} is neato"
-#+END_SRC
-
 * Modules & Mixins
 
-Inheritance: ~class Child < Parent ⋯ end~.
+  #+latex: \hspace{-1.3em}
+Single parent inheritance: ~class Child < Parent ⋯ end~,
+for propagating behaviour to similar objects.
+
+A ~module~ is a collection of functions and constants,
+whose contents may become part of any class.
+Implicitly, the module will depend on a number of class methods
+---c.f., Java interfaces--- which are used to implement the module's
+contents. This way, we can /mix in/ additional capabilities into objects
+regardless of similarity.
 
 Modules:
 + Inclusion binds module contents to the class instances.
 + Extension binds module contents to the class itself.
 
 #+BEGIN_SRC ruby :results output
-module M; def go; "I did it!" end end
+# Implicitly depends on a function “did”
+module M; def go; "I #{did}!" end end
 
-class Verb; include M end
-class Action; extend M end
+# Each class here defines a method “did”; Action makes it static.
+# Both include the module; the first dynamically, the second statically.
+class Verb; include M;  def did; "jumped" end end
+class Action; extend M; def self.did; "sat"  end end
 
 puts "#{Verb.new.go} versus #{Action.go}"
+# ⇒ I jumped! versus I sat!
+#+END_SRC
+
+For example, a class wanting to be an ~Enumerable~ must implement ~each~
+and a class wanting to be ~Comparable~ must implement the ‘spaceship’
+operator ~<=>~. In turn, we may then use ~sort, any?, max, member?, …~;
+run ~Enumerable.instance_methods~ to list many useful methods.
+
+Modules are also values and can be defined anywhere:
+#+BEGIN_SRC ruby
+mymod = Module.new do def talk; "Hi" end end
+#+END_SRC
+
+* Todo COMMENT more
+
+** Printing and Comments
+#+BEGIN_SRC ruby
+# Print with p, puts, print
+p 1 , 2, :three # ⇒ 1, 2, :three
+
+# Like PHP and Perl, “heredoc” quotes long strings: Left quote is <<XYZ and right
+# quote is XYZ, where XYZ is any sequence of characters. Use <<'XYZ' for the text
+# to not be interpolated.
+b = <<XXX
+hello
+XXX
+c = <<'abc'
+ddd hello
+abc
+#+END_SRC
+
+** “Ruby is Pure OO” -- 99% true!?
+
+In pure OO, such as Smalltalk, conditional constructs are not part of the language
+but are instead merely defined behaviour for the Boolean class. That is, one sends
+a message to a Boolean object on how to proceed, rather than taking action by inspecting it.
+
++ Smalltalk syntax: b ifTrue: [ ⋯ ] .
++ Ruby syntax: if b then ⋯ end
+
+Looking at, for example, true.methods does not seem that a conditional operation
+is defined for the Boolean class.
+
+Likewise for loops, and chains of and's and or's.
+
+How can control flow be construed as message passing in Ruby?
+---Without adding it ‘after the fact’ with something like this:
+#+BEGIN_SRC ruby :results output
+class TrueClass
+  def ifTrue; yield; end
+end
+
+class FalseClass
+  def ifTrue; self; end
+end
+
+puts ((1 == 0 + 1).ifTrue do "hi" end) # ⇒ "hi". Need parens for some reason; why!?
+puts  (1 == 0).ifTrue do "hi" end      # ⇒ "false"
 #+END_SRC
 
 #+RESULTS:
-: I did it! versus I did it!
+: hi
+: false
+: false
+
+( Incidentally, how do I get at the Boolean expressions themselves?
+  How can I obtain, say 1 == 0, in the second example above and for example
+  print it as “1 == 0” rather than “false”. Moreover, “1 == 0” is really “1.send(:=, 0)”,
+  so how can I get access to the object 1, the method ==, and the other argument, 0?
+)
+
+I'm nearly a week new into Ruby; thanks for being patient.
+
+https://www.reddit.com/r/ruby/comments/cz2v9t/ruby_is_pure_oo_99_true/
+
+** η rule
+
+In mathematics, the “η-rule”, a form of extensionality, says
+$$
+   (λ x → f x)  ≈  f
+$$
+In almost this form, this rule holds for Haskell and Lisp. **How does this rule hold for Ruby?**
+
+With the help of some code, see below, I have arrived at this rule:
+
+    # Using methods (references) in place of blocks:
+    ~h do |e| g e end ≈ h(&method(:g))~
+
+    Provided ~h~ takes an explicit block and ~g~ is defined using ~def~.
+    If ~g~ is defined using ~lambda~, then rhs is ~h(&g)~.
+
+Below is some code to back this up.
+However, *can this rule be stated more tersely?* My observation does not
+account for the case ~h~ takes an implicit block. How is that treated?
+
+#+BEGIN_SRC ruby
+def go; "Hello" end
+go′ = lambda { "Hola" }
+def go¹ (x) "Hey, #{x}" end
+go′¹ = lambda {|x| "Yo, #{x}"}
+
+def explicit (&blk) blk.call end
+explicit do go end     # ⇒ Hello
+explicit(&method(:go)) # ⇒ Hello
+explicit(&go′)         # ⇒ Hola′
+#
+# “&:” not uniform?
+explicit(&:go) rescue "crashes"
+explicit(&:go′) rescue "crashes"
+[1,2,3].map(&:to_s)    # ⇒ ["1", "2", "3"]
+
+def explicit¹ (&blk) blk.call(1) end
+explicit¹ do |x| x.to_s end # ⇒ "1"
+explicit¹(&:to_s)           # ⇒ "1"
+explicit¹(&method(:go¹))    # ⇒ "Hey, 1"
+explicit¹(&:go¹) rescue "crashes"
+explicit¹(&:go′¹) rescue "crashes"
+explicit¹(&go′¹) # ⇒ "Yo, 1"
+
+def implicit; yield end
+implicit do go end # ⇒ Hello
+# implicit (&method(:go)) ⇒ Syntax error!
+
+def implicit¹; yield(1) end
+implicit¹ do |x| go¹ x end   # ⇒ "Hey, 1"
+# implicit¹ (&method(:go¹))  # ⇒ Syntax error
+#+END_SRC
+
+I'm nearly a week new into Ruby; thanks for being patient.
+
+https://www.reddit.com/r/ruby/comments/cz2msl/etaconversion_in_ruby_what_do/
 
 * COMMENT Structures and ADTS
 
@@ -570,16 +1056,26 @@ puts "#{Verb.new.go} versus #{Action.go}"
 #+latex: {\color{white}.}\vspace{-1em}
 + [[https://rubymonk.com/][Ruby Monk]] --- Interactive, in browser, tutorials
 + [[https://www.ruby-lang.org/en/documentation/][Ruby Meta-tutorial --- ruby-lang.org]]
++ [[https://www.theodinproject.com/courses/ruby-programming][The Odin Project]]
 + [[https://learnxinyminutes.com/docs/ruby/][Learn Ruby in ~30 minutes]] --- https://learnxinyminutes.com/
 + [[http://egonschiele.github.io/contracts.ruby/][contracts.ruby --- Making assertions about your code]]
 + [[https://github.com/txus/adts][Algebraic Data Types for Ruby]]
 + [[https://github.com/rubocop-hq/ruby-style-guide][Community-driven Ruby Coding Style Guide]]
 + [[http://ruby-doc.com/docs/ProgrammingRuby/][Programming Ruby: The Pragmatic Programmer's Guide]]
++ [[https://www.youtube.com/watch?v=Dji9ALCgfpM][Learn Ruby in One Video -- Derek Banas' Languages Series]]
++ [[http://rubykoans.com/][Learn Ruby Using Zen Koans]]
++ [[https://thecodeboss.dev/2015/09/metaprogramming-in-ruby-part-2/][Metaprogramming in Ruby]] ---also some useful [[https://gist.github.com/Integralist/a29212a8eb10bc8154b7#file-0-ruby-meta-programming-spells-covered-md][snippets]]
++ [[http://shop.oreilly.com/product/9781934356593.do][Seven Languages in Seven Weeks]]
 
   :More:
 http://ruby-for-beginners.rubymonstas.org/index.html
 http://rubylearning.com/satishtalim/tutorial.html
 https://spin.atomicobject.com/2013/07/29/ruby-data-types-algebraic/
+http://poignant.guide/book/chapter-2.html
+https://medium.com/rubycademy/struct-in-ruby-cac1c7514517
+
+Type Checking in Ruby — Check Yo Self Before You Wreck Yo Self
+https://blog.appsignal.com/2019/08/27/ruby-magic-type-checking-in-ruby.html
 :End:
 
 * COMMENT produce a single column portrait of the cheat sheet
