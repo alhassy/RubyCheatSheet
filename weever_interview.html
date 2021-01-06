@@ -1,0 +1,1375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-01-06 Wed 10:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Product Distribution with ‘Robots’</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="[[http://alhassy.github.io/][Musa Al-hassy]]" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<style>  summary:hover {background:pink;} </style>
+        <style>
+        /* From: https://endlessparentheses.com/public/css/endless.css */
+        /* See also: https://meta.superuser.com/questions/4788/css-for-the-new-kbd-style */
+        kbd
+        {
+          -moz-border-radius: 6px;
+          -moz-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          -webkit-border-radius: 6px;
+          -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          background-color: #f7f7f7;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          color: #333;
+          display: inline-block;
+          font-family: 'Droid Sans Mono', monospace;
+          font-size: 80%;
+          font-weight: normal;
+          line-height: inherit;
+          margin: 0 .1em;
+          padding: .08em .4em;
+          text-shadow: 0 1px 0 #fff;
+          word-spacing: -4px;
+
+          box-shadow: 2px 2px 2px #222; /* MA: An extra I've added. */
+        }
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/css/tooltipster.bundle.min.css"/>
+
+        <link rel="stylesheet" type="text/css" href="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-punk.min.css" />
+
+        <script type="text/javascript">
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape('%3Cscript src="https://code.jquery.com/jquery-1.10.0.min.js"%3E%3C/script%3E'));
+            }
+        </script>
+
+         <script type="text/javascript"            src="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+
+          <script>
+                 $(document).ready(function() {
+                     $('.tooltip').tooltipster({
+                         theme: 'tooltipster-punk',
+                         contentAsHTML: true,
+                         animation: 'grow',
+                         delay: [100,500],
+                         // trigger: 'click'
+                         trigger: 'custom',
+                         triggerOpen: {
+                             mouseenter: true
+                         },
+                         triggerClose: {
+                             originClick: true,
+                             scroll: true
+                         }
+         });
+                 });
+             </script>
+
+        <style>
+           abbr {color: red;}
+
+           .tooltip { border-bottom: 1px dotted #000;
+                      color:red;
+                      text-decoration: none;}
+        </style>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Product Distribution with ‘Robots’
+<br />
+<span class="subtitle">Weever Developer Interview</span>
+</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#Problem-Statement">1. <a href="#Problem-Statement">Problem Statement</a></a></li>
+<li><a href="#What's-a-Robot">2. <a href="#What's-a-Robot">What's a Robot?</a></a></li>
+<li><a href="#What's-a-distribution-company">3. <a href="#What's-a-distribution-company">What's a distribution company?</a></a></li>
+<li><a href="#How-big-is-our-universe">4. <a href="#How-big-is-our-universe">How big is our ‘universe’</a></a></li>
+<li><a href="#A-few-tests">5. <a href="#A-few-tests">A few tests</a></a></li>
+<li><a href="#Where-are-my-bots">6. <a href="#Where-are-my-bots">Where are my bots?</a></a></li>
+<li><a href="#Full-snippets">7. <a href="#Full-snippets">Full snippets</a></a></li>
+</ul>
+</div>
+</div>
+<p>
+<div class="header">
+  <a href="https://alhassy.github.io/" class="logo">Life & Computing Science</a>
+  <br>
+    <a href="https://alhassy.github.io/AlBasmala">AlBasmala</a>
+    <a href="https://alhassy.github.io/archive">Archive</a>
+    <a href="https://alhassy.github.io/tags">Tags</a>
+    <a href="https://alhassy.github.io/rss.xml">RSS</a>
+    <a href="https://alhassy.github.io/about">About</a>
+</div><style>  summary:hover {background:pink;} </style>
+        <style>
+        /* From: https://endlessparentheses.com/public/css/endless.css */
+        /* See also: https://meta.superuser.com/questions/4788/css-for-the-new-kbd-style */
+        kbd
+        {
+          -moz-border-radius: 6px;
+          -moz-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          -webkit-border-radius: 6px;
+          -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          background-color: #f7f7f7;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+          color: #333;
+          display: inline-block;
+          font-family: 'Droid Sans Mono', monospace;
+          font-size: 80%;
+          font-weight: normal;
+          line-height: inherit;
+          margin: 0 .1em;
+          padding: .08em .4em;
+          text-shadow: 0 1px 0 #fff;
+          word-spacing: -4px;
+
+          box-shadow: 2px 2px 2px #222; /* MA: An extra I've added. */
+        }
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/css/tooltipster.bundle.min.css"/>
+
+        <link rel="stylesheet" type="text/css" href="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-punk.min.css" />
+
+        <script type="text/javascript">
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape('%3Cscript src="https://code.jquery.com/jquery-1.10.0.min.js"%3E%3C/script%3E'));
+            }
+        </script>
+
+         <script type="text/javascript"            src="https://alhassy.github.io/org-special-block-extras/tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+
+          <script>
+                 $(document).ready(function() {
+                     $('.tooltip').tooltipster({
+                         theme: 'tooltipster-punk',
+                         contentAsHTML: true,
+                         animation: 'grow',
+                         delay: [100,500],
+                         // trigger: 'click'
+                         trigger: 'custom',
+                         triggerOpen: {
+                             mouseenter: true
+                         },
+                         triggerClose: {
+                             originClick: true,
+                             scroll: true
+                         }
+         });
+                 });
+             </script>
+
+        <style>
+           abbr {color: red;}
+
+           .tooltip { border-bottom: 1px dotted #000;
+                      color:red;
+                      text-decoration: none;}
+        </style>
+        <meta name="author" content="Musa Al-hassy">
+    <meta name="referrer" content="no-referrer"><link href="usual-org-front-matter.css" rel="stylesheet" type="text/css" /><link href="org-notes-style.css" rel="stylesheet" type="text/css" /><link href="floating-toc.css" rel="stylesheet" type="text/css" /><link href="blog-banner.css" rel="stylesheet" type="text/css" /><link rel="icon" href="images/favicon.png"><script type="text/javascript">
+   /*
+   @licstart  The following is the entire license notice for the
+   JavaScript code in this tag.
+
+   Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+   The JavaScript code in this tag is free software: you can
+   redistribute it and/or modify it under the terms of the GNU
+   General Public License (GNU GPL) as published by the Free Software
+   Foundation, either version 3 of the License, or (at your option)
+   any later version.  The code is distributed WITHOUT ANY WARRANTY;
+   without even the implied warranty of MERCHANTABILITY or FITNESS
+   FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+   As additional permission under GNU GPL version 3 section 7, you
+   may distribute non-source (e.g., minimized or compacted) forms of
+   that code without the copy of the GNU GPL normally required by
+   section 4, provided you include this license notice and a URL
+   through which recipients can access the Corresponding Source.
+
+
+   @licend  The above is the entire license notice
+   for the JavaScript code in this tag.
+   */
+   <!--/*--><![CDATA[/*><!--*/
+    function CodeHighlightOn(elem, id)
+    {
+      var target = document.getElementById(id);
+      if(null != target) {
+        elem.cacheClassElem = elem.className;
+        elem.cacheClassTarget = target.className;
+        target.className = "code-highlighted";
+        elem.className   = "code-highlighted";
+      }
+    }
+    function CodeHighlightOff(elem, id)
+    {
+      var target = document.getElementById(id);
+      if(elem.cacheClassElem)
+        elem.className = elem.cacheClassElem;
+      if(elem.cacheClassTarget)
+        target.className = elem.cacheClassTarget;
+    }
+   /*]]>*///-->
+   </script><link href="https://alhassy.github.io/org-notes-style.css" rel="stylesheet" type="text/css" /><link href="https://alhassy.github.io/floating-toc.css" rel="stylesheet" type="text/css" /><link href="https://alhassy.github.io/blog-banner.css" rel="stylesheet" type="text/css" /><br><center><h1>Product Distribution with ‘Robots’</h1></center>
+</p>
+
+<div class="org-center">
+<p>
+<a href="https://alhassy.github.io/RubyCheatSheet/CheatSheet.pdf"><img src="https://img.shields.io/badge/Ruby_3-CheatSheet-informational?logo=ruby"></a>
+<a href="https://alhassy.github.io/emacs.d/#What-Does-Literate-Programming-Look-Like"><img src="https://img.shields.io/badge/docs-literate-success?logo=read-the-docs"></a>
+</p>
+
+<p>
+<a href="https://alhassy.github.io/"><img src="https://img.shields.io/badge/author-musa_al--hassy-purple?logo=nintendo-3ds"></a>
+</p>
+
+<p>
+<a href="https://alhassy.github.io/about"><img src="https://img.shields.io/badge/Hire-me-success?logo=nil"></a>
+</p>
+</div>
+
+<div class="org-center">
+<p>
+<b>Abstract</b>
+</p>
+</div>
+<blockquote>
+<p>
+Let's write some Ruby code to model distribution companies &#x2014;such as
+Amazon.
+</p>
+
+<p>
+We'll suppose that distribution is automated via robots that can
+advance only one step in any cardinal direction.  As such, we'll make
+a class for robots that models their behaviour then a class for the
+companies &#x2014;which, in turn, consist of a number of robots.
+</p>
+
+<p>
+This is a solution to one of WeeverApps’ <a href="https://weeverapps.github.io/interviews/">interview problems</a>.
+</p>
+</blockquote>
+
+<p>
+The full code is at the very end, and also <a href="weever_interview.rb.html">here</a>.
+</p>
+
+<div id="outline-container-Problem-Statement" class="outline-2">
+<h2 id="Problem-Statement"><span class="section-number-2">1</span> <a href="#Problem-Statement">Problem Statement</a></h2>
+<div class="outline-text-2" id="text-Problem-Statement">
+<p>
+From <a href="https://weeverapps.github.io/interviews/robot.html">weeverapps</a>&#x2026;
+</p>
+
+
+<div style="padding: 1em; background-color: #CCFFCC;border-radius: 15px; font-size: 0.9em; box-shadow: 0.05em 0.1em 5px 0.01em #00000057;"><h3></h3>
+<p>
+Robbie the robot and his pals deliver presents to houses. Build a
+program that runs a simulation given a number of robots and a string
+of their orders, keeps track of the state of the robots, and the
+presents they’ve delivered.
+</p>
+
+<p>
+The robots move in the 4 cardinal directions. They each take turns. On
+a robot’s turn they will read one instruction from the moves sequence,
+move in the indicated direction, and attempt to deliver their present.
+</p>
+
+<p>
+A robot may deliver a present if, and only if, there are no other
+robots on the space in which they are ending their turn.
+</p>
+
+<p>
+For example, if there are 3 robots: <code>robbie, jane, bob</code>, and a move
+sequence of <code>^^VV&lt;&gt;</code> we should get the following moves:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">robbie</td>
+<td class="org-left">^</td>
+</tr>
+
+<tr>
+<td class="org-left">jane</td>
+<td class="org-left">^</td>
+</tr>
+
+<tr>
+<td class="org-left">bob</td>
+<td class="org-left">V</td>
+</tr>
+
+<tr>
+<td class="org-left">robbie</td>
+<td class="org-left">V</td>
+</tr>
+
+<tr>
+<td class="org-left">jane</td>
+<td class="org-left">&lt;</td>
+</tr>
+
+<tr>
+<td class="org-left">bob</td>
+<td class="org-left">&gt;</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+A present is delivered when a robot enters a space in the world.
+</p>
+
+</div>
+
+
+<p>
+For readability, we will aim to produce user-friendly output along
+with the map of the world visited by our robots.  For instance, using
+inputs <code>"jasim, kathy, bobert"</code> and <code>"&gt;&gt;&gt;^&gt;v"</code>, below one can see the
+map grow horizontally or vertically as robots perform deliveries.
+</p>
+
+<pre class="example" id="org34842e0">
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+
+6. bobert  goes down    --moving from (1, 0) to (1, -1)
+ 0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+</pre>
+
+<p>
+The numbers denote how many deliveries were made to a particular
+location; whereas the singular number enclosed in angle brackets,
+<code>⟨⋯⟩</code>, is a visual indication of the origin &#x2014;location (0,0).  The
+benefit of this approach is that one can quickly glean a number of
+useful statistics.
+</p>
+
+<p>
+<b>
+
+<span style="color:green;">
+
+Going forward
+
+</span>
+
+</b>, we will display <b>
+
+<span style="color:red;">
+
+results
+
+</span>
+
+</b> of examples in these boring
+square boxes.
+</p>
+</div>
+</div>
+
+<div id="outline-container-What's-a-Robot" class="outline-2">
+<h2 id="What's-a-Robot"><span class="section-number-2">2</span> <a href="#What's-a-Robot">What's a Robot?</a></h2>
+<div class="outline-text-2" id="text-What's-a-Robot">
+<p>
+It is an entity that deliviers presents to homes, and as such, it has
+a name &#x2014;which should be unique&#x2014; as well as a current location.
+For fun, let's also also keep track of it's deliveries.
+</p>
+
+<p>
+A robot is <i>responsible</i> for its features, but anyone may ask where it
+is, its name, and the deliveries it has performed.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Robots have two other useful features that one may query.</span>
+<span style="color: #d33682; font-style: italic;">attr_reader</span>   <span style="color: #6c71c4; font-weight: bold;">:name</span>       <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Name of the robot</span>
+<span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:x</span>, <span style="color: #6c71c4; font-weight: bold;">:y</span>      <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Current location</span>
+<span style="color: #d33682; font-style: italic;">attr_reader</span>   <span style="color: #6c71c4; font-weight: bold;">:deliveries</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Non-empty list of locations it has been to.</span>
+                          <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A &#8220;location&#8221; is a hash of two</span>
+                          <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">integers :x, :y.</span>
+</pre>
+</div>
+
+<p>
+Robots begin their day at the company wharehouse; i.e., the origin
+<i>(0,0)</i>.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A robot is brought into existence needing only a name.</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">initialize</span> name
+  <span style="color: #268bd2;">@name</span>         = name
+  <span style="color: #268bd2;">@x</span>            = 0
+  <span style="color: #268bd2;">@y</span>            = 0
+  <span style="color: #b58900;">@deliveries = [ {x: @x, y</span>: <span style="color: #268bd2;">@y</span>} ]
+  <span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+For our aimed output &#x2014;as discussed in §<a href="#Problem-Statement">1</a>&#x2014; we need
+to pretty print robot locations.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Its current location, a pair of integers</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">location</span>
+    <span style="color: #2aa198;">"(</span><span style="color: #268bd2;">#{@x}</span><span style="color: #2aa198;">, </span><span style="color: #268bd2;">#{@y}</span><span style="color: #2aa198;">)"</span>
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+Finally, we're at the heart of the matter: Robot movement.  We pattern
+match on the shape of the <code>direction</code> symbol and act accordingly, if
+possible; otherwise, we raise a helpful error message.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">move</span> direction
+  <span style="color: #859900; font-weight: bold;">case</span> direction
+  <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:up</span>
+    <span style="color: #268bd2;">@y</span> += 1
+  <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:down</span>
+    <span style="color: #268bd2;">@y</span> -= 1
+  <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:left</span>
+    <span style="color: #268bd2;">@x</span> -= 1
+  <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:right</span>
+    <span style="color: #268bd2;">@x</span> += 1
+  <span style="color: #859900; font-weight: bold;">in</span> oops
+    <span style="color: #d33682; font-style: italic;">raise</span> <span style="color: #2aa198;">"</span><span style="color: #268bd2;">#{@name}</span><span style="color: #b58900;"> sees a malformed direction</span><span style="color: #2aa198;">: </span><span style="color: #268bd2;">#{oops}</span><span style="color: #2aa198;">!"</span>\
+         <span style="color: #2aa198;">"\nCardinal directions are the symbols :up, :down, :left, :right."</span>
+  <span style="color: #859900; font-weight: bold;">end</span>
+  <span style="color: #b58900;">@deliveries &lt;&lt; {x: @x, y</span>: <span style="color: #268bd2;">@y</span>}
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+So much for robots.
+</p>
+
+<hr />
+
+<p>
+Before moving on, let's have a super simple sanity check.  That is,
+let's actually test out this class.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby">robbie = <span style="color: #b58900; font-style: italic;">Robot</span>.new(<span style="color: #6c71c4; font-weight: bold;">:robbie</span>)
+robbie.move <span style="color: #6c71c4; font-weight: bold;">:up</span>
+robbie.move <span style="color: #6c71c4; font-weight: bold;">:right</span>
+robbie.move <span style="color: #6c71c4; font-weight: bold;">:left</span>
+<span style="color: #d33682; font-style: italic;">p</span> robbie.location, robbie.deliveries
+</pre>
+</div>
+
+<pre class="example">
+"(0, 1)"
+[{:x=&gt;0, :y=&gt;0}, {:x=&gt;0, :y=&gt;1}, {:x=&gt;1, :y=&gt;1}, {:x=&gt;0, :y=&gt;1}]
+</pre>
+</div>
+</div>
+
+<div id="outline-container-What's-a-distribution-company" class="outline-2">
+<h2 id="What's-a-distribution-company"><span class="section-number-2">3</span> <a href="#What's-a-distribution-company">What's a distribution company?</a></h2>
+<div class="outline-text-2" id="text-What's-a-distribution-company">
+<p>
+A distribution company has a number of robots along with a mutable list of
+deliveries to be performed. Even though robots keep track of their deliveries
+&#x2014;i.e., we have a robot-to-location mapping&#x2014;, it is useful to have the
+converse view as well: Given a location, which robots have gone there?  This is
+how we get the number of deliveries shown in the introduction, §<a href="#Problem-Statement">1</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:universe</span>   <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A mapping of locations-to-robots</span>
+<span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:directions</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">List of directions</span>
+<span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:robots</span>     <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">List of directions</span>
+</pre>
+</div>
+
+<p>
+Users need not be burdened with the need to write <code class="src src-ruby">[<span style="color: #6c71c4; font-weight: bold;">:right</span>, <span style="color: #6c71c4; font-weight: bold;">:right</span>, <span style="color: #6c71c4; font-weight: bold;">:right</span>, <span style="color: #6c71c4; font-weight: bold;">:up</span>, <span style="color: #6c71c4; font-weight: bold;">:right</span>, <span style="color: #6c71c4; font-weight: bold;">:down</span>]</code> when <code class="src src-ruby"><span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span></code> achieves the same goal and is nicer for the user.  Likewise for
+robot names.  There is a clear mapping between the two <i>representations</i>, as shown
+below.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">In Robot#move we were verbose, using pattern matching and error checking.</span>
+<span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">This time, let's forgoe the checks and be terse.</span>
+<span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">That is, a precondition of this method if that</span>
+<span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">&#8216;arg&#8217; is a string consisting of ^,v,V,&lt;,&gt; .</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">directions=</span> arg
+  <span style="color: #b58900;">@directions = arg.split('').map{ |x| {"^" =&gt; </span><span style="color: #6c71c4; font-weight: bold;">:up</span>,
+                                        <span style="color: #2aa198;">"v"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:down</span>, <span style="color: #2aa198;">"V"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:down</span>,
+                                        <span style="color: #2aa198;">"&lt;"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:left</span>, <span style="color: #2aa198;">"&gt;"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:right</span>}[x] }
+<span style="color: #859900; font-weight: bold;">end</span>
+
+<span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A precondition of this method is that</span>
+<span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">&#8216;arg&#8217; is a comma separated string of unique names.</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">robots=</span> arg
+  <span style="color: #268bd2;">@robots</span> = arg.split(<span style="color: #2aa198;">","</span>).map{ |x| <span style="color: #b58900; font-style: italic;">Robot</span>.new(x.strip.to_sym) }
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+Using the above setter methods, a distribution company initialisation is clear
+and compact.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">initialize</span> robots = <span style="color: #2aa198;">"robbie"</span>, directions = <span style="color: #2aa198;">""</span>
+  <span style="color: #268bd2;">@universe</span>       = <span style="color: #b58900; font-style: italic;">Hash</span>.new([]) <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Thus far, every location has vistiors [].</span>
+  <span style="color: #859900; font-weight: bold;">self</span>.robots     = robots
+  <span style="color: #859900; font-weight: bold;">self</span>.directions = directions
+
+  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Universe dimensions grow with robot movements.</span>
+  <span style="color: #268bd2;">@X</span> = [0, 0]
+  <span style="color: #268bd2;">@Y</span> = [0, 0]
+  <span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+We have enough matter to run some tests &#x2014;no need to keep going if things don't
+work at this stage!
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+<span style="color: #d33682; font-style: italic;">p</span> weever.robots.map(&amp;<span style="color: #6c71c4; font-weight: bold;">:name</span>), weever.directions
+
+weever.directions = <span style="color: #2aa198;">"Vv&lt;&gt;"</span>
+weever.robots = <span style="color: #2aa198;">"robbie, jane, roy"</span>
+<span style="color: #d33682; font-style: italic;">p</span> weever.robots.map(&amp;<span style="color: #6c71c4; font-weight: bold;">:name</span>), weever.directions
+</pre>
+</div>
+
+<pre class="example">
+[:jasim, :kathy, :bobert]
+[:right, :right, :right, :up, :right, :down]
+[:robbie, :jane, :roy]
+[:down, :down, :left, :right]
+</pre>
+
+
+<p>
+Excellent!
+</p>
+
+
+<div style="padding: 1em; background-color: #CCFFCC;border-radius: 15px; font-size: 0.9em; box-shadow: 0.05em 0.1em 5px 0.01em #00000057;"><h3>Universe dimensions?</h3>
+<p>
+In order to <i>draw</i> the map of locations visited by our robots, we need to know the
+dimensions of the universe. Instead of having four variables &#x2014;
+<code class="src src-ruby"><span style="color: #268bd2;">@@X_min</span>, <span style="color: #268bd2;">@@X_max</span>, <span style="color: #268bd2;">@@Y_min</span>, <span style="color: #268bd2;">@@Y_max</span></code> &#x2014;, we group the
+min-max of each dimension with an eye toward making use of <code class="src src-ruby"><span style="color: #b58900; font-style: italic;">Enumerable</span><span style="color: #96A7A9; font-style: italic;">#</span><span style="color: #96A7A9; font-style: italic;">minmax</span></code>.
+</p>
+
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-How-big-is-our-universe" class="outline-2">
+<h2 id="How-big-is-our-universe"><span class="section-number-2">4</span> <a href="#How-big-is-our-universe">How big is our ‘universe’</a></h2>
+<div class="outline-text-2" id="text-How-big-is-our-universe">
+<p>
+Since <code>@X, @Y</code> keep track of the universe dimensions, we can now show the map
+by printing the number of robots that have visited a location &#x2014;and emphasising
+the origin.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">show</span>
+  <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">""</span>
+  <span style="color: #859900; font-weight: bold;">for</span> row <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@Y</span>[1].downto <span style="color: #268bd2;">@Y</span>[0] <span style="color: #859900; font-weight: bold;">do</span>
+    <span style="color: #859900; font-weight: bold;">for</span> col <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@X</span>[0].upto <span style="color: #268bd2;">@X</span>[1] <span style="color: #859900; font-weight: bold;">do</span>
+      format = <span style="color: #859900; font-weight: bold;">if</span> row == 0 <span style="color: #859900; font-weight: bold;">and</span> col == 0 <span style="color: #859900; font-weight: bold;">then</span> <span style="color: #2aa198;">"&#10216;%s&#10217;"</span> <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #2aa198;">" %s "</span> <span style="color: #859900; font-weight: bold;">end</span>
+      <span style="color: #d33682; font-style: italic;">print</span> <span style="color: #d33682; font-style: italic;">format</span> % <span style="color: #b58900;">@universe[{x: col, y</span>: row}].length
+    <span style="color: #859900; font-weight: bold;">end</span>
+    <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">""</span>
+  <span style="color: #859900; font-weight: bold;">end</span>
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+<i>The universe does not yet grow, let's change that!</i> When a company <i>ships</i> its
+products, the robots will move and, in turn, we will know which parts of the
+city, landscape, our robots have traversed.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr"> 1: </span><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">This method carries out a number of directions.</span>
+<span class="linenr"> 2: </span><span style="color: #96A7A9; font-style: italic;">#</span>
+<span class="linenr"> 3: </span><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">step: The number of directional steps to perform; all by default.</span>
+<span class="linenr"> 4: </span><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">withmap: Flag to indicate whether a map should be drawn at each stage.</span>
+<span class="linenr"> 5: </span><span style="color: #96A7A9; font-style: italic;">#          </span><span style="color: #96A7A9; font-style: italic;">For brevity, this requires that step be non-nil.</span>
+<span class="linenr"> 6: </span><span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">ship</span> (<span style="color: #6c71c4; font-weight: bold;">step:</span> <span style="color: #6c71c4; font-weight: bold;">nil</span>, <span style="color: #6c71c4; font-weight: bold;">withmap:</span> <span style="color: #6c71c4; font-weight: bold;">false</span>)
+<span class="linenr"> 7: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Essentially zipping with a cyclic list</span>
+<span id="coderef-cyclic-init" class="coderef-off"><span class="linenr"> 8: </span>  l = <span style="color: #268bd2;">@robots</span>.length</span>
+<span id="coderef-loop-start" class="coderef-off"><span class="linenr"> 9: </span>  (<span style="color: #268bd2;">@directions</span> || []).each_with_index <span style="color: #859900; font-weight: bold;">do</span> |d, i|</span>
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>    <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Move the current robot</span>
+<span id="coderef-cyclic-use" class="coderef-off"><span class="linenr">12: </span>    r            = <span style="color: #268bd2;">@robots</span>[i.modulo(l)]</span>
+<span id="coderef-location-old" class="coderef-off"><span class="linenr">13: </span>    old_location = r.location</span>
+<span class="linenr">14: </span>    r.move(d)
+<span class="linenr">15: </span>
+<span id="coderef-universe-growth" class="coderef-off"><span class="linenr">16: </span>    <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Update the universe dimensions</span></span>
+<span class="linenr">17: </span>    <span style="color: #b58900;">@universe[{x: r.x, y</span>: r.y}] += [r.name]
+<span class="linenr">18: </span>    <span style="color: #268bd2;">@Y</span> = (<span style="color: #268bd2;">@Y</span> + [r.y]).minmax
+<span class="linenr">19: </span>    <span style="color: #268bd2;">@X</span> = (<span style="color: #268bd2;">@X</span> + [r.x]).minmax
+<span class="linenr">20: </span>
+<span id="coderef-pretty-printing" class="coderef-off"><span class="linenr">21: </span>    <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Print the map incrementally, if requested</span></span>
+<span class="linenr">22: </span>    <span style="color: #859900; font-weight: bold;">unless</span> <span style="color: #859900; font-weight: bold;">not</span> step
+<span class="linenr">23: </span>      <span style="color: #859900; font-weight: bold;">break</span> <span style="color: #859900; font-weight: bold;">unless</span> i &lt; step
+<span class="linenr">24: </span>      <span style="color: #d33682; font-style: italic;">print</span> <span style="color: #2aa198;">"\n</span><span style="color: #268bd2;">#{1 + i}</span><span style="color: #2aa198;">. </span><span style="color: #268bd2;">#{r.name.to_s.ljust(7)}</span><span style="color: #2aa198;"> goes </span><span style="color: #268bd2;">#{d.to_s.ljust(5)}</span><span style="color: #2aa198;">"</span>\
+<span class="linenr">25: </span>            <span style="color: #2aa198;">"\t--moving from </span><span style="color: #268bd2;">#{old_location}</span><span style="color: #2aa198;"> to </span><span style="color: #268bd2;">#{r.location}</span><span style="color: #2aa198;">"</span>
+<span class="linenr">26: </span>      show <span style="color: #859900; font-weight: bold;">if</span> withmap
+<span class="linenr">27: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">28: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">29: </span><span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+This is, perhaps, the most crucial method.
+Let's briefly discuss its design.
+</p>
+<dl class="org-dl">
+<dt>Line <a href="#coderef-cyclic-init" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-cyclic-init');" onmouseout="CodeHighlightOff(this, 'coderef-cyclic-init');">8</a></dt><dd>We're essentially ‘zipping’ a pair of lists, but we want
+to treat the robots list as if it were an infinite cyclic list.  We simulate
+this behaviour by <b>
+
+<span style="color:green;">
+
+controlling access
+
+</span>
+
+</b> to it: When an index is out of
+bounds, we wrap it around to the beginning &#x2014;as shown in Line <a href="#coderef-cyclic-use" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-cyclic-use');" onmouseout="CodeHighlightOff(this, 'coderef-cyclic-use');">12</a>.</dd>
+<dt>Line <a href="#coderef-loop-start" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-loop-start');" onmouseout="CodeHighlightOff(this, 'coderef-loop-start');">9</a></dt><dd>The list of directions may have been fully consumed
+previous shipment, and so be <code class="src src-ruby"><span style="color: #6c71c4; font-weight: bold;">nil</span></code>. When that happens,
+the loop happens on the empty list &#x2014;and so ‘nothing happens’, unexceptionally.</dd>
+<dt>Line <a href="#coderef-location-old" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-location-old');" onmouseout="CodeHighlightOff(this, 'coderef-location-old');">13</a></dt><dd>We keep the old location for pretty printing only.</dd>
+<dt>Line <a href="#coderef-universe-growth" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-universe-growth');" onmouseout="CodeHighlightOff(this, 'coderef-universe-growth');">16</a></dt><dd><p>
+If we had used the 4 variable approach, we'd have the following ghastly code!
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #268bd2;">@Y_max</span> = [<span style="color: #268bd2;">@Y_max</span>, y].max
+<span style="color: #268bd2;">@X_max</span> = [<span style="color: #268bd2;">@X_max</span>, x].max
+<span style="color: #268bd2;">@Y_min</span> = [<span style="color: #268bd2;">@Y_min</span>, y].min
+<span style="color: #268bd2;">@X_min</span> = [<span style="color: #268bd2;">@X_min</span>, x].min
+</pre>
+</div></dd>
+<dt>Line <a href="#coderef-pretty-printing" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-pretty-printing');" onmouseout="CodeHighlightOff(this, 'coderef-pretty-printing');">21</a></dt><dd>Boring code to get the job done: Unless we've shown
+the requested number of <code>step</code>-s, we print the current robot's movement and, if
+requested, we draw the map of the universe.</dd>
+</dl>
+
+<p>
+Due to time constraints, a <i>practical</i> feature has been omitted: After shipping,
+we <i>should</i> discard the directions actually followed (and possibly reset the
+locations of the robots to the origin); otherwise future calls to <code>ship</code> would
+result in duplicate deliveries to the same places.
+</p>
+</div>
+</div>
+
+<div id="outline-container-A-few-tests" class="outline-2">
+<h2 id="A-few-tests"><span class="section-number-2">5</span> <a href="#A-few-tests">A few tests</a></h2>
+<div class="outline-text-2" id="text-A-few-tests">
+<p>
+Let's test these new features out!
+</p>
+
+<hr />
+
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new
+<span style="color: #d33682; font-style: italic;">p</span> weever.robots.map(&amp;<span style="color: #6c71c4; font-weight: bold;">:name</span>), weever.directions
+weever.show
+</pre>
+</div>
+
+<pre class="example">
+[:robbie]
+[]
+
+⟨0⟩
+</pre>
+
+
+<p>
+The default is a single robot ---<i>robbie</i>&#x2014; and no movements; so we have an empty
+universe.
+</p>
+
+<hr />
+
+<p>
+Let's list our own robots.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+<span style="color: #d33682; font-style: italic;">p</span> weever.robots.map(&amp;<span style="color: #6c71c4; font-weight: bold;">:name</span>), weever.directions
+weever.show
+</pre>
+</div>
+
+<pre class="example">
+[:jasim, :kathy, :bobert]
+[:right, :right, :right, :up, :right, :down]
+
+⟨0⟩
+</pre>
+
+
+<p>
+Looks good so far &#x2014;still no movement has happened.
+</p>
+
+<hr />
+
+<div class="org-src-container">
+<pre class="src src-ruby">weever.ship
+weever.show
+</pre>
+</div>
+
+<pre class="example">
+0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+</pre>
+
+
+<p>
+Nice, the universe has grown. But how?
+</p>
+
+<hr />
+
+<p>
+Here are the first 5 steps.
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+weever.ship <span style="color: #6c71c4; font-weight: bold;">step:</span> 5, <span style="color: #6c71c4; font-weight: bold;">withmap:</span> <span style="color: #6c71c4; font-weight: bold;">true</span>
+</pre>
+</div>
+
+<pre class="example" id="org3e73493">
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+</pre>
+</div>
+</div>
+
+<div id="outline-container-Where-are-my-bots" class="outline-2">
+<h2 id="Where-are-my-bots"><span class="section-number-2">6</span> <a href="#Where-are-my-bots">Where are my bots?</a></h2>
+<div class="outline-text-2" id="text-Where-are-my-bots">
+<p>
+We can extract out some useful aspects of the <code>ship</code> method into top-level
+functions&#x2026;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Pretty prints a listing of the robots&#8217; positions</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">positions</span>
+  <span style="color: #859900; font-weight: bold;">for</span> r <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@robots</span> <span style="color: #859900; font-weight: bold;">do</span>
+    <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">"</span><span style="color: #268bd2;">#{r.name.to_s.ljust(7)}</span><span style="color: #2aa198;"> is at </span><span style="color: #268bd2;">#{r.location}</span><span style="color: #2aa198;">"</span>
+  <span style="color: #859900; font-weight: bold;">end</span>
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<details class="code-details"
+                 style ="padding: 1em;
+                          background-color: #e5f5e5;
+                          /* background-color: pink; */
+                          border-radius: 15px;
+                          color: hsl(157 75%);
+                          font-size: 0.9em;
+                          box-shadow: 0.05em 0.1em 5px 0.01em  #00000057;">
+                  <summary>
+                    <strong>
+                      <font face="Courier" size="3" color="green">
+                         ‘positions’ test
+                      </font>
+                    </strong>
+                  </summary>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+weever.ship <span style="color: #6c71c4; font-weight: bold;">step:</span> 9, <span style="color: #6c71c4; font-weight: bold;">withmap:</span> <span style="color: #6c71c4; font-weight: bold;">true</span>
+<span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">"\n"</span>
+weever.positions
+</pre>
+</div>
+
+<pre class="example" id="orgafed6af">
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+
+6. bobert  goes down    --moving from (1, 0) to (1, -1)
+ 0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+
+jasim   is at (1, 1)
+kathy   is at (2, 0)
+bobert  is at (1, -1)
+</pre>
+
+
+</details>
+
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">How many houses have at least n presents?</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">presents</span> n
+  <span style="color: #b58900;">@universe.values.map(&amp;</span><span style="color: #6c71c4; font-weight: bold;">:length</span>).filter {|x| x &gt;= n}.length
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<details class="code-details"
+                 style ="padding: 1em;
+                          background-color: #e5f5e5;
+                          /* background-color: pink; */
+                          border-radius: 15px;
+                          color: hsl(157 75%);
+                          font-size: 0.9em;
+                          box-shadow: 0.05em 0.1em 5px 0.01em  #00000057;">
+                  <summary>
+                    <strong>
+                      <font face="Courier" size="3" color="green">
+                         ‘presents’ test
+                      </font>
+                    </strong>
+                  </summary>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+weever.ship
+weever.show
+<span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">"\nNumber of locations with &#8805; 1 present is </span><span style="color: #268bd2;">#{weever.presents 1}</span><span style="color: #2aa198;">"</span>
+</pre>
+</div>
+
+<pre class="example">
+0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+
+Number of locations with ≥ 1 present is 4
+</pre>
+
+
+
+</details>
+
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">How many deliveries were performed?</span>
+<span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">total_deliveries</span>
+  <span style="color: #b58900;">@universe.values.map(&amp;</span><span style="color: #6c71c4; font-weight: bold;">:length</span>).sum
+<span style="color: #859900; font-weight: bold;">end</span>
+</pre>
+</div>
+
+
+<details class="code-details"
+                 style ="padding: 1em;
+                          background-color: #e5f5e5;
+                          /* background-color: pink; */
+                          border-radius: 15px;
+                          color: hsl(157 75%);
+                          font-size: 0.9em;
+                          box-shadow: 0.05em 0.1em 5px 0.01em  #00000057;">
+                  <summary>
+                    <strong>
+                      <font face="Courier" size="3" color="green">
+                         ‘total_deliveries’ test
+                      </font>
+                    </strong>
+                  </summary>
+<div class="org-src-container">
+<pre class="src src-ruby">weever = <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>.new <span style="color: #2aa198;">"jasim, kathy, bobert"</span> , <span style="color: #2aa198;">"&gt;&gt;&gt;^&gt;v"</span>
+weever.ship
+weever.show
+<span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">"\nThe total number of deliveries is </span><span style="color: #268bd2;">#{weever.total_deliveries}</span><span style="color: #2aa198;">."</span>
+</pre>
+</div>
+
+<pre class="example">
+0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+
+The total number of deliveries is 6.
+</pre>
+
+
+
+</details>
+
+
+
+<p>
+The above methods could have been, for <i>efficiency</i>, accumulated in the <code>ship</code>
+method &#x2014;rather than incurring the linear cost of accessing <code>@robots</code> and
+<code>@universe</code> multiple times.
+</p>
+</div>
+</div>
+<div id="outline-container-Full-snippets" class="outline-2">
+<h2 id="Full-snippets"><span class="section-number-2">7</span> <a href="#Full-snippets">Full snippets</a></h2>
+<div class="outline-text-2" id="text-Full-snippets">
+<details class="code-details"
+                 style ="padding: 1em;
+                          background-color: #e5f5e5;
+                          /* background-color: pink; */
+                          border-radius: 15px;
+                          color: hsl(157 75%);
+                          font-size: 0.9em;
+                          box-shadow: 0.05em 0.1em 5px 0.01em  #00000057;">
+                  <summary>
+                    <strong>
+                      <font face="Courier" size="3" color="green">
+                         Full definition of the ‘Robot’ class
+                      </font>
+                    </strong>
+                  </summary>
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr"> 1: </span><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900; font-style: italic;">Robot</span>
+<span class="linenr"> 2: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Robots have two other useful features that one may query.</span>
+<span class="linenr"> 3: </span>  <span style="color: #d33682; font-style: italic;">attr_reader</span>   <span style="color: #6c71c4; font-weight: bold;">:name</span>       <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Name of the robot</span>
+<span class="linenr"> 4: </span>  <span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:x</span>, <span style="color: #6c71c4; font-weight: bold;">:y</span>      <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Current location</span>
+<span class="linenr"> 5: </span>  <span style="color: #d33682; font-style: italic;">attr_reader</span>   <span style="color: #6c71c4; font-weight: bold;">:deliveries</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Non-empty list of locations it has been to.</span>
+<span class="linenr"> 6: </span>                            <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A &#8220;location&#8221; is a hash of two</span>
+<span class="linenr"> 7: </span>                            <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">integers :x, :y.</span>
+<span class="linenr"> 8: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A robot is brought into existence needing only a name.</span>
+<span class="linenr"> 9: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">initialize</span> name
+<span class="linenr">10: </span>    <span style="color: #268bd2;">@name</span>         = name
+<span class="linenr">11: </span>    <span style="color: #268bd2;">@x</span>          = 0
+<span class="linenr">12: </span>    <span style="color: #268bd2;">@y</span>          = 0
+<span class="linenr">13: </span>    <span style="color: #b58900;">@deliveries = [ {x: @x, y</span>: <span style="color: #268bd2;">@y</span>} ]
+<span class="linenr">14: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">15: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Its current location, a pair of integers</span>
+<span class="linenr">16: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">location</span>
+<span class="linenr">17: </span>      <span style="color: #2aa198;">"(</span><span style="color: #268bd2;">#{@x}</span><span style="color: #2aa198;">, </span><span style="color: #268bd2;">#{@y}</span><span style="color: #2aa198;">)"</span>
+<span class="linenr">18: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">19: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">move</span> direction
+<span class="linenr">20: </span>    <span style="color: #859900; font-weight: bold;">case</span> direction
+<span class="linenr">21: </span>    <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:up</span>
+<span class="linenr">22: </span>      <span style="color: #268bd2;">@y</span> += 1
+<span class="linenr">23: </span>    <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:down</span>
+<span class="linenr">24: </span>      <span style="color: #268bd2;">@y</span> -= 1
+<span class="linenr">25: </span>    <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:left</span>
+<span class="linenr">26: </span>      <span style="color: #268bd2;">@x</span> -= 1
+<span class="linenr">27: </span>    <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #6c71c4; font-weight: bold;">:right</span>
+<span class="linenr">28: </span>      <span style="color: #268bd2;">@x</span> += 1
+<span class="linenr">29: </span>    <span style="color: #859900; font-weight: bold;">in</span> oops
+<span class="linenr">30: </span>      <span style="color: #d33682; font-style: italic;">raise</span> <span style="color: #2aa198;">"</span><span style="color: #268bd2;">#{@name}</span><span style="color: #b58900;"> sees a malformed direction</span><span style="color: #2aa198;">: </span><span style="color: #268bd2;">#{oops}</span><span style="color: #2aa198;">!"</span>\
+<span class="linenr">31: </span>           <span style="color: #2aa198;">"\nCardinal directions are the symbols :up, :down, :left, :right."</span>
+<span class="linenr">32: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">33: </span>    <span style="color: #b58900;">@deliveries &lt;&lt; {x: @x, y</span>: <span style="color: #268bd2;">@y</span>}
+<span class="linenr">34: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">35: </span><span style="color: #859900; font-weight: bold;">end</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Robot class end.</span>
+</pre>
+</div>
+
+
+</details>
+
+
+
+<details class="code-details"
+                 style ="padding: 1em;
+                          background-color: #e5f5e5;
+                          /* background-color: pink; */
+                          border-radius: 15px;
+                          color: hsl(157 75%);
+                          font-size: 0.9em;
+                          box-shadow: 0.05em 0.1em 5px 0.01em  #00000057;">
+                  <summary>
+                    <strong>
+                      <font face="Courier" size="3" color="green">
+                         Full definition of the ‘DistributionsCompany’ class
+                      </font>
+                    </strong>
+                  </summary>
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr"> 1: </span><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900; font-style: italic;">DistributionsCompany</span>
+<span class="linenr"> 2: </span>  <span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:universe</span>   <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A mapping of locations-to-robots</span>
+<span class="linenr"> 3: </span>  <span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:directions</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">List of directions</span>
+<span class="linenr"> 4: </span>  <span style="color: #d33682; font-style: italic;">attr_accessor</span> <span style="color: #6c71c4; font-weight: bold;">:robots</span>     <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">List of directions</span>
+<span class="linenr"> 5: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">In Robot#move we were verbose, using pattern matching and error checking.</span>
+<span class="linenr"> 6: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">This time, let's forgoe the checks and be terse.</span>
+<span class="linenr"> 7: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">That is, a precondition of this method if that</span>
+<span class="linenr"> 8: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">&#8216;arg&#8217; is a string consisting of ^,v,V,&lt;,&gt; .</span>
+<span class="linenr"> 9: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">directions=</span> arg
+<span class="linenr">10: </span>    <span style="color: #b58900;">@directions = arg.split('').map{ |x| {"^" =&gt; </span><span style="color: #6c71c4; font-weight: bold;">:up</span>,
+<span class="linenr">11: </span>                                          <span style="color: #2aa198;">"v"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:down</span>, <span style="color: #2aa198;">"V"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:down</span>,
+<span class="linenr">12: </span>                                          <span style="color: #2aa198;">"&lt;"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:left</span>, <span style="color: #2aa198;">"&gt;"</span> =&gt; <span style="color: #6c71c4; font-weight: bold;">:right</span>}[x] }
+<span class="linenr">13: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">14: </span>
+<span class="linenr">15: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">A precondition of this method is that</span>
+<span class="linenr">16: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">&#8216;arg&#8217; is a comma separated string of unique names.</span>
+<span class="linenr">17: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">robots=</span> arg
+<span class="linenr">18: </span>    <span style="color: #268bd2;">@robots</span> = arg.split(<span style="color: #2aa198;">","</span>).map{ |x| <span style="color: #b58900; font-style: italic;">Robot</span>.new(x.strip.to_sym) }
+<span class="linenr">19: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">20: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">initialize</span> robots = <span style="color: #2aa198;">"robbie"</span>, directions = <span style="color: #2aa198;">""</span>
+<span class="linenr">21: </span>    <span style="color: #268bd2;">@universe</span>       = <span style="color: #b58900; font-style: italic;">Hash</span>.new([]) <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Thus far, every location has vistiors [].</span>
+<span class="linenr">22: </span>    <span style="color: #859900; font-weight: bold;">self</span>.robots     = robots
+<span class="linenr">23: </span>    <span style="color: #859900; font-weight: bold;">self</span>.directions = directions
+<span class="linenr">24: </span>
+<span class="linenr">25: </span>    <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Universe dimensions grow with robot movements.</span>
+<span class="linenr">26: </span>    <span style="color: #268bd2;">@X</span> = [0, 0]
+<span class="linenr">27: </span>    <span style="color: #268bd2;">@Y</span> = [0, 0]
+<span class="linenr">28: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">29: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">show</span>
+<span class="linenr">30: </span>    <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">""</span>
+<span class="linenr">31: </span>    <span style="color: #859900; font-weight: bold;">for</span> row <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@Y</span>[1].downto <span style="color: #268bd2;">@Y</span>[0] <span style="color: #859900; font-weight: bold;">do</span>
+<span class="linenr">32: </span>      <span style="color: #859900; font-weight: bold;">for</span> col <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@X</span>[0].upto <span style="color: #268bd2;">@X</span>[1] <span style="color: #859900; font-weight: bold;">do</span>
+<span class="linenr">33: </span>        format = <span style="color: #859900; font-weight: bold;">if</span> row == 0 <span style="color: #859900; font-weight: bold;">and</span> col == 0 <span style="color: #859900; font-weight: bold;">then</span> <span style="color: #2aa198;">"&#10216;%s&#10217;"</span> <span style="color: #859900; font-weight: bold;">else</span> <span style="color: #2aa198;">" %s "</span> <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">34: </span>        <span style="color: #d33682; font-style: italic;">print</span> <span style="color: #d33682; font-style: italic;">format</span> % <span style="color: #b58900;">@universe[{x: col, y</span>: row}].length
+<span class="linenr">35: </span>      <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">36: </span>      <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">""</span>
+<span class="linenr">37: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">38: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">39: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">This method carries out a number of directions.</span>
+<span class="linenr">40: </span>  <span style="color: #96A7A9; font-style: italic;">#</span>
+<span class="linenr">41: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">step: The number of directional steps to perform; all by default.</span>
+<span class="linenr">42: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">withmap: Flag to indicate whether a map should be drawn at each stage.</span>
+<span class="linenr">43: </span>  <span style="color: #96A7A9; font-style: italic;">#          </span><span style="color: #96A7A9; font-style: italic;">For brevity, this requires that step be non-nil.</span>
+<span class="linenr">44: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">ship</span> (<span style="color: #6c71c4; font-weight: bold;">step:</span> <span style="color: #6c71c4; font-weight: bold;">nil</span>, <span style="color: #6c71c4; font-weight: bold;">withmap:</span> <span style="color: #6c71c4; font-weight: bold;">false</span>)
+<span class="linenr">45: </span>    <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Essentially zipping with a cyclic list</span>
+<span id="coderef-cyclic-init" class="coderef-off"><span class="linenr">46: </span>    l = <span style="color: #268bd2;">@robots</span>.length</span>
+<span id="coderef-loop-start" class="coderef-off"><span class="linenr">47: </span>    (<span style="color: #268bd2;">@directions</span> || []).each_with_index <span style="color: #859900; font-weight: bold;">do</span> |d, i|</span>
+<span class="linenr">48: </span>
+<span class="linenr">49: </span>      <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Move the current robot</span>
+<span id="coderef-cyclic-use" class="coderef-off"><span class="linenr">50: </span>      r            = <span style="color: #268bd2;">@robots</span>[i.modulo(l)]</span>
+<span id="coderef-location-old" class="coderef-off"><span class="linenr">51: </span>      old_location = r.location</span>
+<span class="linenr">52: </span>      r.move(d)
+<span class="linenr">53: </span>
+<span id="coderef-universe-growth" class="coderef-off"><span class="linenr">54: </span>      <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Update the universe dimensions</span></span>
+<span class="linenr">55: </span>      <span style="color: #b58900;">@universe[{x: r.x, y</span>: r.y}] += [r.name]
+<span class="linenr">56: </span>      <span style="color: #268bd2;">@Y</span> = (<span style="color: #268bd2;">@Y</span> + [r.y]).minmax
+<span class="linenr">57: </span>      <span style="color: #268bd2;">@X</span> = (<span style="color: #268bd2;">@X</span> + [r.x]).minmax
+<span class="linenr">58: </span>
+<span id="coderef-pretty-printing" class="coderef-off"><span class="linenr">59: </span>      <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Print the map incrementally, if requested</span></span>
+<span class="linenr">60: </span>      <span style="color: #859900; font-weight: bold;">unless</span> <span style="color: #859900; font-weight: bold;">not</span> step
+<span class="linenr">61: </span>        <span style="color: #859900; font-weight: bold;">break</span> <span style="color: #859900; font-weight: bold;">unless</span> i &lt; step
+<span class="linenr">62: </span>        <span style="color: #d33682; font-style: italic;">print</span> <span style="color: #2aa198;">"\n</span><span style="color: #268bd2;">#{1 + i}</span><span style="color: #2aa198;">. </span><span style="color: #268bd2;">#{r.name.to_s.ljust(7)}</span><span style="color: #2aa198;"> goes </span><span style="color: #268bd2;">#{d.to_s.ljust(5)}</span><span style="color: #2aa198;">"</span>\
+<span class="linenr">63: </span>              <span style="color: #2aa198;">"\t--moving from </span><span style="color: #268bd2;">#{old_location}</span><span style="color: #2aa198;"> to </span><span style="color: #268bd2;">#{r.location}</span><span style="color: #2aa198;">"</span>
+<span class="linenr">64: </span>        show <span style="color: #859900; font-weight: bold;">if</span> withmap
+<span class="linenr">65: </span>      <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">66: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">67: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">68: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">Pretty prints a listing of the robots&#8217; positions</span>
+<span class="linenr">69: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">positions</span>
+<span class="linenr">70: </span>    <span style="color: #859900; font-weight: bold;">for</span> r <span style="color: #859900; font-weight: bold;">in</span> <span style="color: #268bd2;">@robots</span> <span style="color: #859900; font-weight: bold;">do</span>
+<span class="linenr">71: </span>      <span style="color: #d33682; font-style: italic;">puts</span> <span style="color: #2aa198;">"</span><span style="color: #268bd2;">#{r.name.to_s.ljust(7)}</span><span style="color: #2aa198;"> is at </span><span style="color: #268bd2;">#{r.location}</span><span style="color: #2aa198;">"</span>
+<span class="linenr">72: </span>    <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">73: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">74: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">How many houses have at least n presents?</span>
+<span class="linenr">75: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">presents</span> n
+<span class="linenr">76: </span>    <span style="color: #b58900;">@universe.values.map(&amp;</span><span style="color: #6c71c4; font-weight: bold;">:length</span>).filter {|x| x &gt;= n}.length
+<span class="linenr">77: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">78: </span>  <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">How many deliveries were performed?</span>
+<span class="linenr">79: </span>  <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #b58900;">total_deliveries</span>
+<span class="linenr">80: </span>    <span style="color: #b58900;">@universe.values.map(&amp;</span><span style="color: #6c71c4; font-weight: bold;">:length</span>).sum
+<span class="linenr">81: </span>  <span style="color: #859900; font-weight: bold;">end</span>
+<span class="linenr">82: </span><span style="color: #859900; font-weight: bold;">end</span> <span style="color: #96A7A9; font-style: italic;"># </span><span style="color: #96A7A9; font-style: italic;">class DistributionsCompany</span>
+</pre>
+</div>
+
+
+</details>
+
+
+<p>
+On my machine, <code>irb -r ./weever_interview.rb</code> then line-by-line of the examples
+above works fine.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: <a href="http://alhassy.github.io/">Musa Al-hassy</a></p>
+<p class="date">Created: 2021-01-06 Wed 10:26</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,649 @@
+#+TITLE: Product Distribution with ‘Robots’
+#+SUBTITLE: Weever Developer Interview
+#+AUTHOR: [[http://alhassy.github.io/][Musa Al-hassy]]
+#+EMAIL: alhassy@gmail.com
+#+PROPERTY: header-args :results replace output :tangle no :session the-app :noweb yes :eval never-export
+
+blog:header
+
+* Abstract :ignore:
+  :PROPERTIES:
+  :CUSTOM_ID: Abstract
+  :END:
+
+#+begin_center
+badge:Ruby_3|CheatSheet|informational|https://alhassy.github.io/RubyCheatSheet/CheatSheet.pdf|ruby
+badge:docs|literate|success|https://alhassy.github.io/emacs.d/#What-Does-Literate-Programming-Look-Like|read-the-docs
+
+# tweet:https://github.com/alhassy/org-special-block-extras
+
+badge:author|musa_al-hassy|purple|https://alhassy.github.io/|nintendo-3ds
+
+badge:Hire|me|success|https://alhassy.github.io/about
+#+end_center
+
+#+begin_center
+*Abstract*
+#+end_center
+#+begin_quote
+Let's write some Ruby code to model distribution companies ---such as
+Amazon.
+
+We'll suppose that distribution is automated via robots that can
+advance only one step in any cardinal direction.  As such, we'll make
+a class for robots that models their behaviour then a class for the
+companies ---which, in turn, consist of a number of robots.
+
+This is a solution to one of WeeverApps’ [[https://weeverapps.github.io/interviews/][interview problems]].
+#+end_quote
+
+The full code is at the very end, and also [[file:weever_interview.rb.html][here]].
+
+* COMMENT Emacs Setup :from_cheat_sheet:
+  :PROPERTIES:
+  :CUSTOM_ID: COMMENT-Emacs-Setup
+  :END:
+
+  + [[https://github.com/zenspider/enhanced-ruby-mode][Enhanced Ruby Mode]]: Static analysis, such as assigning to unused variables, and smart indentation.
+     #+BEGIN_SRC emacs-lisp
+(use-package enh-ruby-mode)
+
+(add-hook 'ruby-mode-hook 'enh-ruby-mode)
+#+END_SRC
+
+#+RESULTS:
+| enh-ruby-mode | inf-ruby-minor-mode |
+
+  + [[https://github.com/dgutov/robe][Robe-mode]]: Display documentation, jump to definitions, name completion.
+#+BEGIN_SRC emacs-lisp
+(use-package robe)
+(add-hook 'ruby-mode-hook 'robe-mode)
+
+(push 'company-robe company-backends)
+
+;; Autoclose paired syntax elements like parens, quotes, etc
+(add-hook 'ruby-mode-hook 'ruby-electric-mode)
+#+END_SRC
+
+  + In org-blocks:
+
+   #+BEGIN_SRC ruby
+RUBY_VERSION
+#+END_SRC
+
+#+RESULTS:
+: 3.0.0
+
+
++ [[https://worace.works/2016/06/07/getting-started-with-emacs-for-ruby/][Getting Started with Emacs for Ruby]]
+  and
+  [[https://wikemacs.org/wiki/Ruby][Ruby with Emacs]]
+
+* COMMENT unambiguously_visible
+  :PROPERTIES:
+  :CUSTOM_ID: COMMENT-unambiguously-visible
+  :END:
+
+#+BEGIN_SRC ruby
+class Class
+  def unambiguously_visible (*features)
+    features.each do |it|
+      define_singleton_method(it) do class_variable_get "@@#{it}" end
+      define_method(it) do self.class.class_variable_get "@@#{it}" end
+    end
+  end
+end
+#+END_SRC
+
+* Problem Statement
+  :PROPERTIES:
+  :CUSTOM_ID: Problem-Statement
+  :END:
+
+From [[https://weeverapps.github.io/interviews/robot.html][weeverapps]]...
+
+  #+begin_box
+  Robbie the robot and his pals deliver presents to houses. Build a
+  program that runs a simulation given a number of robots and a string
+  of their orders, keeps track of the state of the robots, and the
+  presents they’ve delivered.
+
+The robots move in the 4 cardinal directions. They each take turns. On
+a robot’s turn they will read one instruction from the moves sequence,
+move in the indicated direction, and attempt to deliver their present.
+
+A robot may deliver a present if, and only if, there are no other
+robots on the space in which they are ending their turn.
+
+For example, if there are 3 robots: ~robbie, jane, bob~, and a move
+sequence of ~^^VV<>~ we should get the following moves:
+
+| robbie | ^ |
+| jane   | ^ |
+| bob    | V |
+| robbie | V |
+| jane   | < |
+| bob    | > |
+
+A present is delivered when a robot enters a space in the world.
+  #+end_box
+
+For readability, we will aim to produce user-friendly output along
+with the map of the world visited by our robots.  For instance, using
+inputs ~"jasim, kathy, bobert"~ and ~">>>^>v"~, below one can see the
+map grow horizontally or vertically as robots perform deliveries.
+
+#+begin_example
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+
+6. bobert  goes down    --moving from (1, 0) to (1, -1)
+ 0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+#+end_example
+
+The numbers denote how many deliveries were made to a particular
+location; whereas the singular number enclosed in angle brackets,
+~⟨⋯⟩~, is a visual indication of the origin ---location (0,0).  The
+benefit of this approach is that one can quickly glean a number of
+useful statistics.
+
+*[[green:Going forward]]*, we will display *red:results* of examples in these boring
+square boxes.
+
+* What's a Robot?
+  :PROPERTIES:
+  :CUSTOM_ID: What's-a-Robot
+  :END:
+
+It is an entity that deliviers presents to homes, and as such, it has
+a name ---which should be unique--- as well as a current location.
+For fun, let's also also keep track of it's deliveries.
+
+A robot is /responsible/ for its features, but anyone may ask where it
+is, its name, and the deliveries it has performed.
+#+BEGIN_SRC ruby :noweb-ref defn-of-robot
+# Robots have two other useful features that one may query.
+attr_reader   :name       # Name of the robot
+attr_accessor :x, :y      # Current location
+attr_reader   :deliveries # Non-empty list of locations it has been to.
+                          # A “location” is a hash of two
+                          # integers :x, :y.
+#+END_SRC
+
+#+RESULTS:
+
+Robots begin their day at the company wharehouse; i.e., the origin
+/(0,0)/.
+#+BEGIN_SRC ruby :noweb-ref defn-of-robot
+# A robot is brought into existence needing only a name.
+def initialize name
+  @name         = name
+  @x		= 0
+  @y		= 0
+  @deliveries = [ {x: @x, y: @y} ]
+  end
+#+END_SRC
+
+For our aimed output ---as discussed in §[[*Problem Statement]]--- we need
+to pretty print robot locations.
+#+BEGIN_SRC ruby :noweb-ref defn-of-robot
+# Its current location, a pair of integers
+def location
+    "(#{@x}, #{@y})"
+end
+#+END_SRC
+
+Finally, we're at the heart of the matter: Robot movement.  We pattern
+match on the shape of the ~direction~ symbol and act accordingly, if
+possible; otherwise, we raise a helpful error message.
+#+BEGIN_SRC ruby :noweb-ref defn-of-robot
+def move direction
+  case direction
+  in :up
+    @y += 1
+  in :down
+    @y -= 1
+  in :left
+    @x -= 1
+  in :right
+    @x += 1
+  in oops
+    raise "#{@name} sees a malformed direction: #{oops}!"\
+         "\nCardinal directions are the symbols :up, :down, :left, :right."
+  end
+  @deliveries << {x: @x, y: @y}
+end
+#+END_SRC
+
+So much for robots.
+
+--------------------------------------------------------------------------------
+
+Before moving on, let's have a super simple sanity check.  That is,
+let's actually test out this class.
+
+#+BEGIN_SRC ruby :tangle no :session the-app
+robbie = Robot.new(:robbie)
+robbie.move :up
+robbie.move :right
+robbie.move :left
+p robbie.location, robbie.deliveries
+#+END_SRC
+
+#+RESULTS:
+: "(0, 1)"
+: [{:x=>0, :y=>0}, {:x=>0, :y=>1}, {:x=>1, :y=>1}, {:x=>0, :y=>1}]
+
+* What's a distribution company?
+  :PROPERTIES:
+  :CUSTOM_ID: What's-a-distribution-company
+  :END:
+
+A distribution company has a number of robots along with a mutable list of
+deliveries to be performed. Even though robots keep track of their deliveries
+---i.e., we have a robot-to-location mapping---, it is useful to have the
+converse view as well: Given a location, which robots have gone there?  This is
+how we get the number of deliveries shown in the introduction, §[[*Problem
+Statement]].
+
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+attr_accessor :universe   # A mapping of locations-to-robots
+attr_accessor :directions # List of directions
+attr_accessor :robots     # List of directions
+#+END_SRC
+
+Users need not be burdened with the need to write src_ruby[:exports
+code]{[:right, :right, :right, :up, :right, :down]} when src_ruby[:exports
+code]{">>>^>v"} achieves the same goal and is nicer for the user.  Likewise for
+robot names.  There is a clear mapping between the two /representations/, as shown
+below.
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+# In Robot#move we were verbose, using pattern matching and error checking.
+# This time, let's forgoe the checks and be terse.
+# That is, a precondition of this method if that
+# ‘arg’ is a string consisting of ^,v,V,<,> .
+def directions= arg
+  @directions = arg.split('').map{ |x| {"^" => :up,
+                                        "v" => :down, "V" => :down,
+                                        "<" => :left, ">" => :right}[x] }
+end
+
+# A precondition of this method is that
+# ‘arg’ is a comma separated string of unique names.
+def robots= arg
+  @robots = arg.split(",").map{ |x| Robot.new(x.strip.to_sym) }
+end
+#+END_SRC
+
+Using the above setter methods, a distribution company initialisation is clear
+and compact.
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+def initialize robots = "robbie", directions = ""
+  @universe       = Hash.new([]) # Thus far, every location has vistiors [].
+  self.robots     = robots
+  self.directions = directions
+
+  # Universe dimensions grow with robot movements.
+  @X = [0, 0]
+  @Y = [0, 0]
+  end
+#+END_SRC
+
+We have enough matter to run some tests ---no need to keep going if things don't
+work at this stage!
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+p weever.robots.map(&:name), weever.directions
+
+weever.directions = "Vv<>"
+weever.robots = "robbie, jane, roy"
+p weever.robots.map(&:name), weever.directions
+#+END_SRC
+
+#+RESULTS:
+: [:jasim, :kathy, :bobert]
+: [:right, :right, :right, :up, :right, :down]
+: [:robbie, :jane, :roy]
+: [:down, :down, :left, :right]
+
+Excellent!
+
+#+begin_box Universe dimensions?
+In order to /draw/ the map of locations visited by our robots, we need to know the
+dimensions of the universe. Instead of having four variables ---
+src_ruby[:exports code]{@@X_min, @@X_max, @@Y_min, @@Y_max} ---, we group the
+min-max of each dimension with an eye toward making use of src_ruby[:exports
+code]{Enumerable#minmax}.
+#+end_box
+
+* How big is our ‘universe’
+  :PROPERTIES:
+  :CUSTOM_ID: How-big-is-our-universe
+  :END:
+
+   Since ~@X, @Y~ keep track of the universe dimensions, we can now show the map
+   by printing the number of robots that have visited a location ---and emphasising
+   the origin.
+   #+BEGIN_SRC ruby :noweb-ref defn-of-company
+def show
+  puts ""
+  for row in @Y[1].downto @Y[0] do
+    for col in @X[0].upto @X[1] do
+      format = if row == 0 and col == 0 then "⟨%s⟩" else " %s " end
+      print format % @universe[{x: col, y: row}].length
+    end
+    puts ""
+  end
+end
+#+END_SRC
+
+   /The universe does not yet grow, let's change that!/ When a company /ships/ its
+   products, the robots will move and, in turn, we will know which parts of the
+   city, landscape, our robots have traversed.
+#+BEGIN_SRC ruby -r -n :noweb-ref defn-of-company
+# This method carries out a number of directions.
+#
+# step: The number of directional steps to perform; all by default.
+# withmap: Flag to indicate whether a map should be drawn at each stage.
+#          For brevity, this requires that step be non-nil.
+def ship (step: nil, withmap: false)
+  # Essentially zipping with a cyclic list
+  l = @robots.length                              (ref:cyclic-init)
+  (@directions || []).each_with_index do |d, i|   (ref:loop-start)
+
+    # Move the current robot
+    r            = @robots[i.modulo(l)]           (ref:cyclic-use)
+    old_location = r.location                     (ref:location-old)
+    r.move(d)
+
+    # Update the universe dimensions              (ref:universe-growth)
+    @universe[{x: r.x, y: r.y}] += [r.name]
+    @Y = (@Y + [r.y]).minmax
+    @X = (@X + [r.x]).minmax
+
+    # Print the map incrementally, if requested    (ref:pretty-printing)
+    unless not step
+      break unless i < step
+      print "\n#{1 + i}. #{r.name.to_s.ljust(7)} goes #{d.to_s.ljust(5)}"\
+            "\t--moving from #{old_location} to #{r.location}"
+      show if withmap
+    end
+  end
+end
+#+END_SRC
+
+#   # Shipments sent out, no more directions to follow?    (ref:trim)
+#   if step
+#   then @directions = @directions.to_a[step..-1]
+#   else @directions = []
+#        @robots.map do |r|
+#          r.x = 0
+#          r.y = 0
+#        end
+#   end
+#
+
+This is, perhaps, the most crucial method.
+Let's briefly discuss its design.
++ Line [[(cyclic-init)]] :: We're essentially ‘zipping’ a pair of lists, but we want
+  to treat the robots list as if it were an infinite cyclic list.  We simulate
+  this behaviour by *[[green:controlling access]]* to it: When an index is out of
+  bounds, we wrap it around to the beginning ---as shown in Line [[(cyclic-use)]].
++ Line [[(loop-start)]] :: The list of directions may have been fully consumed
+  previous shipment, and so be src_ruby[:exports code]{nil}. When that happens,
+  the loop happens on the empty list ---and so ‘nothing happens’, unexceptionally.
++ Line [[(location-old)]] :: We keep the old location for pretty printing only.
++ Line [[(universe-growth)]] ::
+  If we had used the 4 variable approach, we'd have the following ghastly code!
+  #+begin_src ruby :tangle no
+@Y_max = [@Y_max, y].max
+@X_max = [@X_max, x].max
+@Y_min = [@Y_min, y].min
+@X_min = [@X_min, x].min
+#+end_src
++ Line [[(pretty-printing)]] :: Boring code to get the job done: Unless we've shown
+  the requested number of ~step~-s, we print the current robot's movement and, if
+  requested, we draw the map of the universe.
+
+Due to time constraints, a /practical/ feature has been omitted: After shipping,
+we /should/ discard the directions actually followed (and possibly reset the
+locations of the robots to the origin); otherwise future calls to ~ship~ would
+result in duplicate deliveries to the same places.
+
+* A few tests
+  :PROPERTIES:
+  :CUSTOM_ID: A-few-tests
+  :END:
+
+Let's test these new features out!
+
+--------------------------------------------------------------------------------
+
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new
+p weever.robots.map(&:name), weever.directions
+weever.show
+#+END_SRC
+
+#+RESULTS:
+: [:robbie]
+: []
+:
+: ⟨0⟩
+
+The default is a single robot ---/robbie/--- and no movements; so we have an empty
+universe.
+
+--------------------------------------------------------------------------------
+
+Let's list our own robots.
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+p weever.robots.map(&:name), weever.directions
+weever.show
+#+END_SRC
+
+#+RESULTS:
+: [:jasim, :kathy, :bobert]
+: [:right, :right, :right, :up, :right, :down]
+:
+: ⟨0⟩
+
+Looks good so far ---still no movement has happened.
+
+--------------------------------------------------------------------------------
+
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever.ship
+weever.show
+#+END_SRC
+
+#+RESULTS:
+: 0  1  0
+: ⟨0⟩ 3  1
+:  0  1  0
+
+Nice, the universe has grown. But how?
+
+--------------------------------------------------------------------------------
+
+Here are the first 5 steps.
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+weever.ship step: 5, withmap: true
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+#+end_example
+
+* Where are my bots?
+  :PROPERTIES:
+  :CUSTOM_ID: Where-are-my-bots
+  :END:
+
+We can extract out some useful aspects of the ~ship~ method into top-level
+functions...
+
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+# Pretty prints a listing of the robots’ positions
+def positions
+  for r in @robots do
+    puts "#{r.name.to_s.ljust(7)} is at #{r.location}"
+  end
+end
+#+END_SRC
+#+begin_details ‘positions’ test
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+weever.ship step: 9, withmap: true
+puts "\n"
+weever.positions
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+1. jasim   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 1
+
+2. kathy   goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 2
+
+3. bobert  goes right	--moving from (0, 0) to (1, 0)
+⟨0⟩ 3
+
+4. jasim   goes up      --moving from (1, 0) to (1, 1)
+ 0  1
+⟨0⟩ 3
+
+5. kathy   goes right	--moving from (1, 0) to (2, 0)
+ 0  1  0
+⟨0⟩ 3  1
+
+6. bobert  goes down    --moving from (1, 0) to (1, -1)
+ 0  1  0
+⟨0⟩ 3  1
+ 0  1  0
+
+jasim   is at (1, 1)
+kathy   is at (2, 0)
+bobert  is at (1, -1)
+#+end_example
+#+end_details
+
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+# How many houses have at least n presents?
+def presents n
+  @universe.values.map(&:length).filter {|x| x >= n}.length
+end
+#+END_SRC
+#+begin_details ‘presents’ test
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+weever.ship
+weever.show
+puts "\nNumber of locations with ≥ 1 present is #{weever.presents 1}"
+#+END_SRC
+
+#+RESULTS:
+: 0  1  0
+: ⟨0⟩ 3  1
+:  0  1  0
+:
+: Number of locations with ≥ 1 present is 4
+#+end_details
+
+#+BEGIN_SRC ruby :noweb-ref defn-of-company
+# How many deliveries were performed?
+def total_deliveries
+  @universe.values.map(&:length).sum
+end
+#+END_SRC
+
+#+begin_details ‘total_deliveries’ test
+#+BEGIN_SRC ruby :tangle no :session the-app
+weever = DistributionsCompany.new "jasim, kathy, bobert" , ">>>^>v"
+weever.ship
+weever.show
+puts "\nThe total number of deliveries is #{weever.total_deliveries}."
+#+END_SRC
+
+#+RESULTS:
+: 0  1  0
+: ⟨0⟩ 3  1
+:  0  1  0
+:
+: The total number of deliveries is 6.
+#+end_details
+
+
+The above methods could have been, for /efficiency/, accumulated in the ~ship~
+method ---rather than incurring the linear cost of accessing ~@robots~ and
+~@universe~ multiple times.
+* Full snippets
+  :PROPERTIES:
+  :CUSTOM_ID: Full-snippets
+  :END:
+
+#+BEGIN_SRC ruby :tangle weever_interview.rb :exports none
+# For full documentation and examples, please see
+# https://alhassy.github.io/RubyCheatSheet/weever_interview.html
+#+END_SRC
+
+#+begin_details Full definition of the ‘Robot’ class
+#+BEGIN_SRC ruby -r -n  :noweb yes :tangle weever_interview.rb
+class Robot
+  <<defn-of-robot>>
+end # Robot class end.
+#+END_SRC
+#+end_details
+
+#+begin_details Full definition of the ‘DistributionsCompany’ class
+#+BEGIN_SRC ruby -r -n :noweb yes :tangle weever_interview.rb
+class DistributionsCompany
+  <<defn-of-company>>
+end # class DistributionsCompany
+#+END_SRC
+#+end_details
+
+On my machine, ~irb -r ./weever_interview.rb~ then line-by-line of the examples
+above works fine.
+
+* footer :ignore:
+  :PROPERTIES:
+  :CUSTOM_ID: footer
+  :END:
+
+# blog:footer
