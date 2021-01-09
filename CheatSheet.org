@@ -29,58 +29,36 @@
 * COMMENT Contents :TOC:QUOTE:ignore:
 #+BEGIN_QUOTE
 - [[#extra-local-setup][Extra, Local, Setup]]
-- [[#project-goal][Project Goal]]
-- [[#cheatsheet-examples][CheatSheet Examples]]
-- [[#why-learn--relearn][Why Learn & Relearn?]]
-- [[#getting-started][Getting Started]]
-- [[#what-if-its-not-good-enough][What if it's not good enough?]]
-- [[#what-if-i-want-n-columns-or-non-landscape-or-multiple-formats][What if I want ~N~ columns? Or non-landscape? Or multiple formats?]]
-- [[#colourful-source-blocks][Colourful Source Blocks]]
+- [[#administrivia][Administrivia]]
+- [[#everything-is-an-object][Everything is an object!]]
+- [[#functions----blocks][Functions -- Blocks]]
+- [[#methods-as-values][Methods as Values]]
+- [[#variables--assignment][Variables & Assignment]]
+- [[#strings-and--notation][Strings and ~%~-Notation]]
+- [[#booleans][Booleans]]
 - [[#break][break]]
-- [[#basic-equational-support][Basic Equational Support]]
-- [[#unicode][Unicode]]
-- [[#parallel-environment][Parallel Environment]]
+- [[#arrays][Arrays]]
 - [[#break-1][break]]
-- [[#subsection-support][Subsection Support]]
-  - [[#a-new-child-tree][A new child tree]]
-  - [[#another-child-tree][Another child tree]]
-- [[#making-readmeorg][Making ~README.org~]]
+- [[#symbols][Symbols]]
+- [[#control-flow][Control Flow]]
+- [[#hashes][Hashes]]
+  - [[#variadic-keyword-arguments][Variadic keyword arguments]]
+  - [[#rose-trees][Rose Trees]]
+- [[#classes][Classes]]
+  - [[#modifiers-public-private-protected][Modifiers: ~public, private, protected~]]
+  - [[#even-classes-are-objects][Even classes are objects!]]
+  - [[#example-person-class][Example: Person Class]]
+  - [[#classes-are-open][Classes are open!]]
+- [[#modules--mixins][Modules & Mixins]]
+- [[#interview-prep][Interview Prep]]
+  - [[#strings--arrays][Strings & Arrays]]
+  - [[#linked-lists][Linked Lists]]
+  - [[#in-situ-list-reversal][In-situ list reversal]]
+  - [[#linked-lists-via-arrays][Linked Lists via Arrays]]
+  - [[#given-a-graph-data-of-parent-child-relations-find-the-parents-children-and-the-parentless-people][Given a graph “data” of parent-child relations, find the parents, children, and the parentless people]]
+  - [[#walk-down-the-maze-from-top-left-to-bottom-right][Walk down the maze from top-left to bottom-right]]
+- [[#reads][Reads]]
 #+END_QUOTE
-
-* COMMENT ~LaTeX~ commands ↦ ~#+latex: \LaTeX~
-
-  Execute the following block, with ~C-c C-c~ anywhere inside it,
-  to hide all LaTeX specific items away so that, for example, the generated HTML
-  does not show them.
-
-  #+BEGIN_SRC emacs-lisp :results no
-(defun my/replace-in-buffer (this that)
-  "Replace every occurance of regexp ‘this’ with ‘that’
-   in the current buffer."
-   (interactive)
-   (save-excursion
-    (beginning-of-buffer)
-    (while (re-search-forward this nil t)
-      (replace-match that)
-    ))
-)
-
-;; Replace newline, any number of space, then room or vspace with a #+latex: beforehand.
-(let (this that)
-  (dolist (kp '( ( "^[ ]*\\\\room" . "#+latex: \\\\room")
-         ( "^[ ]*\\\\vspace" . "#+latex: \\\\vspace")
-         ( "^[ ]*\\\\hspace" . "#+latex: \\\\hspace")
-         ( "^[ ]*\\\\newpage" . "#+latex: \\\\newpage")
-         ( "^[ ]*\\\\columnbreak" . "#+latex: \\\\columnbreak")
-         ))
-    (setq this (car kp))
-    (setq that (cdr kp))
-    (my/replace-in-buffer this that)
-   )
-)
-  #+END_SRC
-
-  #+RESULTS:
 
 * COMMENT Emacs Setup
 
@@ -90,6 +68,13 @@
 
 (add-hook 'ruby-mode-hook 'enh-ruby-mode)
 #+END_SRC
+
+#+RESULTS:
+| ruby-electric-mode | robe-mode | enh-ruby-mode | inf-ruby-minor-mode |
+
+#+RESULTS:
+| enh-ruby-mode | inf-ruby-minor-mode |
+
   + [[https://github.com/dgutov/robe][Robe-mode]]: Display documentation, jump to definitions, name completion.
 #+BEGIN_SRC emacs-lisp
 (use-package robe)
@@ -101,6 +86,9 @@
 (add-hook 'ruby-mode-hook 'ruby-electric-mode)
 #+END_SRC
 
+#+RESULTS:
+| ruby-electric-mode | robe-mode | enh-ruby-mode | inf-ruby-minor-mode |
+
   + In org-blocks:
 
    #+BEGIN_SRC ruby
@@ -108,7 +96,7 @@ RUBY_VERSION
 #+END_SRC
 
     #+RESULTS:
-    : 2.3.7
+    : 3.0.0
 
 + [[https://worace.works/2016/06/07/getting-started-with-emacs-for-ruby/][Getting Started with Emacs for Ruby]]
   and
@@ -537,7 +525,6 @@ y&.upcase # ⇒ nil ^_^
 
 Since [[http://www.randomhacks.net/2005/12/03/why-ruby-is-an-acceptable-lisp/][Ruby is a Lisp]], it comes with [[http://rubylearning.com/blog/2010/11/17/does-ruby-have-too-many-equality-tests/][many equality operations]]; including ~=~~ for regexps.
 
-
 * spacing break                                                      :ignore:
 #+latex: \columnbreak
 * Arrays
@@ -633,12 +620,13 @@ In contrast, all occurrences of a symbol refer to the same memory location.
 * Control Flow
 
 #+latex: \hspace{-1.3em}
-We may omit ~then~ by using ~;~ or a newline, and
+We may omit ~then~ by using ~;~ or a *newline*, and
 may contract ~else if~ into ~elsif~.
 #+BEGIN_SRC ruby
 # Let 𝒞 ∈ {if, unless}
-𝒞 :test₁ then :this else :that end
-this 𝒞 test  ≈  𝒞 test then this else nil end
+1. 𝒞 :test₁ then :this else :that end
+2. this 𝒞 test  ≈  𝒞 test then this else nil end
+3. 𝒞 condition; body end
 #+END_SRC
 #+BEGIN_SRC ruby :results output
   (1..5).each do |e| puts e.to_s end
@@ -1050,6 +1038,503 @@ https://www.reddit.com/r/ruby/comments/cz2msl/etaconversion_in_ruby_what_do/
   A ‘structure’ is just a bunch of items grouped together ---like a named product.
   This is made by declaring a class with the names that can be read and written to,
   and a constructor.
+
+* Interview Prep
+
+** Strings & Arrays
+
+*** unique elements
+   #+begin_src ruby :results output
+def distinct? arr
+  arr.all? { |x| arr.count(x) == 1 }
+end
+
+p  distinct? [1, 2, 3]
+p  distinct? "hello".split(//)
+#+end_src
+
+*Warning!* =arr.count x == 1= is /parsed/ as ~arr.count (x == 1)~, which is a number and
+so is truthy!
+
+/Ruby's scope is to the end of the line!/
+
+*** palindromes
+ #+begin_src ruby :results output
+def palindrome? arr
+ arr == arr.reverse
+end
+
+p palindrome? [1,2,3,2,1]
+p palindrome? [1,2,3,2,]
+
+class Array
+  def mypalin?
+    self == self.reverse
+  end
+end
+
+p [1,2,1].mypalin?
+ #+end_src
+
+*** matrices
+
+    If the (r,c) entry in a martrix is 0, then
+    zero out row r and column c.
+
+ #+begin_src ruby :results output
+def zerofy! mtrx
+  zero_cols = [] # Which columns need to be zeroed out?
+  # Zero out rows
+  mtrx.each_with_index do |row, r|
+    row.each_with_index do |elem, c|
+      if elem == 0
+        mtrx[r].map! {|x| 0}
+        zero_cols << c
+        break
+      end
+    end
+  end
+  # Zero out columns
+  zero_cols.each do |c|
+    mtrx.each_index do |r|
+      mtrx[r][c] = 0
+    end
+  end
+end
+
+m = [ [1, 0, 3], [1, 2, 3], [1, 2, 3] ]
+zerofy! m
+p m
+    #+end_src
+
+    #+RESULTS:
+    : [[0, 0, 0], [1, 0, 3], [1, 0, 3]]
+
+** Linked Lists
+
+#+begin_src ruby :results output
+class LinkedList
+  attr_accessor :head, :tail
+
+  def cons value
+    new_tail = LinkedList.new
+    new_tail.head = @head
+    new_tail.tail = @tail
+    @tail = new_tail
+    @head = value
+  end
+
+  def show
+    p @head if @head
+    @tail.show if @tail
+  end
+
+  def get n
+    if n == 0
+    then @head
+    else @tail.get (n-1)
+    end
+  end
+
+  def rmv_dups
+    seen = @head ? [@head] : []
+    tail = @tail
+    while tail
+      hd = tail.head
+      seen << hd unless not hd or seen.include? hd
+      tail = tail.tail
+    end
+    newtail = LinkedList.new
+    seen[1..].reverse.each {|e| newtail.cons e }
+    @tail = newtail
+    @head = seen[0]
+    self
+  end
+
+end
+
+l = LinkedList.new
+l.show
+p "Nothing printed for previous call"
+
+l.cons(1) # [1]
+l.cons(2) # [2, 1]
+l.cons(3) # [3, 2, 1]
+l.cons(1) # [1, 3, 2, 1]
+l.show
+
+p "Got: #{l.get(1)}"
+
+p "---"
+l.rmv_dups
+l.show
+
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+"Nothing printed for previous call"
+1
+3
+2
+1
+"Got: 3"
+"---"
+1
+3
+2
+#+end_example
+
+** In-situ list reversal
+
+   Go half way and swap elements in first half with those of the second.
+
+   This is  nearly verbatim what is required by a specification of list reversal
+   ;-) ---viz, ∀ i • output[i] = input[length - 1 - i].
+
+#+begin_src ruby :results output
+def insitu l
+  n = l.length
+  for i in 0...n/2 do
+    l[i], l[n - 1 - i] = l[n-1-i], l[i]
+  end
+  l
+end
+
+p insitu [1,2,3,4,5]
+#+end_src
+
+** Linked Lists via Arrays
+#+begin_src ruby :results output
+class LinkedList
+
+  # Invariant: Following @head within @memory is the list;
+  # inaccessible stuff within @memory is garbage ---this is not a graph!
+
+  attr_reader :length
+
+  def initialize length
+    @length = length
+    @memory = [{value: nil, next: nil}] * length
+    @free   = (0...length).to_a # unoccupied addresses
+    @head   = nil # points nowhere; could've used ‘-1’.
+  end
+
+  # E.g., [0//] [1//] [2//] [3//]
+  # This depicts 4 memory slots with addresses in the first slot.
+  # The following shows the “addresses/values/next-pointer”:
+  # [0/C/] [1/B/0] ⟪2/A/1⟫ [3//]
+  # Ignoring the memory locations, this is the list [A, B, C].
+  # Notice that the ⟪head⟫ of the list is emphasised differently.
+  def show
+    @memory.each_with_index do |e, i|
+      if i == @head
+      then print " ⟪#{i}/#{e[:value]}/#{e[:next]}⟫"
+      else print " [#{i}/#{e[:value]}/#{e[:next]}]"
+      end
+    end
+  end
+
+  def delete address
+    if (0...@length).include? address
+
+      # Get parent and child pointers
+      parentp = (0...@length).to_a.filter {|i| @memory[i][:next] == address}.pop
+      parentp = parentp
+      childp  = @memory[address][:next]
+
+      # Delete the stuff at the address & reclaim memory
+      @memory[address] = {value: nil, next: nil}
+      @free << address
+      #
+      # Alter the (grand)parent and child pointers
+      @memory[parentp][:next] = childp if parentp # @head has no parent!
+      @head = childp if not parentp # i.e., we're deleting @head
+      #
+      # yield the memory
+      @memory
+
+    end
+  end
+
+  def cons value
+
+    headp = @head
+    tailp = @head and @memory[@head][:next]
+
+    raise "Error: Out of memory!" if @free.empty?
+    @head = @free[0]
+    @free = @free[1..]
+
+    @memory[@head] = {value: value, next: headp}
+
+    @memory
+  end
+
+end
+
+
+l = LinkedList.new 4
+l.show
+l.cons :C
+l.cons :B
+l.cons :A
+# l.cons :W
+# l.cons :WW # ⇒ Error: Out of memory!
+puts ""
+l.show  # A → B → C
+puts ""
+l.delete 1
+l.show # A → C
+l.delete 2
+puts ""
+l.show
+# p l.delete 1
+#+end_src
+
+#+RESULTS:
+:  [0//] [1//] [2//] [3//]
+:  [0/C/] [1/B/0] ⟪2/A/1⟫ [3//]
+:  [0/C/] [1//] ⟪2/A/0⟫ [3//]
+:  ⟪0/C/⟫ [1//] [2//] [3//]
+
+** Given a graph “data” of parent-child relations, find the parents, children, and the parentless people
+
+Suppose we have some input data describing a graph of relationships between
+parents and children over multiple generations. The data is formatted as a list
+of (parent, child) pairs, where each individual is assigned a unique integer
+identifier.
+
+For example, in this diagram, 3 is a child of 1 and 2, and 5 is a child of 4:
+
+1   2    4
+ \ /   / | \
+  3   5  8  9
+   \ / \     \
+    6   7     11
+
+Write a function that takes this data as input and returns two collections: one
+ containing all individuals with zero known parents, and one containing all
+ individuals with exactly one known parent.
+
+Sample output:
+Zero parents: 1, 2, 4
+One parent: 5, 7, 8, 9, 11
+
+#+begin_src ruby :results output
+data     = [[1, 3], [2, 3], [3,6], [5,6], [5,7], [4,5], [4,8], [4,9], [9, 11]]
+
+people   = data.concat.flatten.uniq
+children = people.filter {|p| data.any? {|d| d[0] == p} }
+parents  = people.filter {|p| data.any? {|d| d[1] == p} }
+parentless = people.filter {|p| data.all? {|d| d[1] != p} }
+half_orphan = people.filter { |p| data.count {|d| d[1] == p} == 1} # Has one parent
+
+p data, people, children, parents, parentless, half_orphan
+
+# For added readability
+class Integer
+  # rel = [parent, child] relationships
+  def parent? rel    # “source incidence”
+    rel[0] == self
+  end
+  def child? rel     # “target incidence”
+    rel[1] == self
+  end
+end
+
+# Now, the parentless people...
+p people.filter { |p| not data.any? {|d| p.child? d}}
+#+end_src
+
+#+RESULTS:
+: [[1, 3], [2, 3], [3, 6], [5, 6], [5, 7], [4, 5], [4, 8], [4, 9], [9, 11]]
+: [1, 3, 2, 6, 5, 7, 4, 8, 9, 11]
+: [1, 3, 2, 5, 4, 9]
+: [3, 6, 5, 7, 8, 9, 11]
+: [1, 2, 4]
+: [5, 7, 8, 9, 11]
+: [1, 2, 4]
+
+That was fun ;-)
+
+** Walk down the maze from top-left to bottom-right
+
+ A city map of only horizontal and vertical streets is a grid, matrix, which is
+ inductively defined and so we can solve this problem by recursion.
+
+ Try taking a step rightward, now we have a smaller map to consider ---we dropped
+ the first column---, now solve the problem recursively. If that fails,
+ then instead, try taking a step downward, and solve the problem recursively.
+
+ At each step, we discard a row or a column and so the input is structural
+ smaller and we terminate when the input is at most a singleton, hence this terminates.
+
+ #+begin_src ruby :results output
+# A 0 means we can move in that direction, a -1 means there is a blockage such
+# as a wall or building and so movement is not possible in that direction.
+map = [ [ 0 , 0, 0, -1, 0  ],
+        [-1 , 0, 0, -1, -1 ],
+        [ 0 , 0, 0, -1, 0  ],
+        [-1 , 0, 0,  0, 0  ],
+        [ 0 , 0, -1, 0, 0  ]
+      ]
+
+def walk map, path
+  if map.count <= 1  and (map[0] && map[0].count <= 1) # at most one row, with at most 1 col
+  then [true, path] # This is the path to go from top left to bottom right!
+  else
+    p path
+    map.each {|r| p r}
+    p "--------------------------------------------------------------------------------"
+    # Take a step right and solve recursively
+    (map[0] and map[0][1] == 0 and walk map.map {|r| r.drop 1 }, (path + [:right])) or
+      # If no path that way, take a step down and solve recursively
+      (map[1] and map[1][0] == 0 and walk (map.drop 1), (path + [:down]))
+  end
+end
+
+# map.map! {|r| r.drop 1 }
+# map = map.drop 1
+# map.each {|r| p r};
+
+p walk map, []
+
+# Nope: After (2,2), there's no more possible moves!
+another = [[ 0, 0, 0, -1, 0],
+          [-1, 0, 0, -1, -1],
+          [ 0, 0, 0, -1, 0],
+          [-1, 0, -1, 0, 0],
+          [ 0, 0, -1, 0, 0]]
+
+p walk another, []
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+[]
+[0, 0, 0, -1, 0]
+[-1, 0, 0, -1, -1]
+[0, 0, 0, -1, 0]
+[-1, 0, 0, 0, 0]
+[0, 0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right]
+[0, 0, -1, 0]
+[0, 0, -1, -1]
+[0, 0, -1, 0]
+[0, 0, 0, 0]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right]
+[0, -1, 0]
+[0, -1, -1]
+[0, -1, 0]
+[0, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down]
+[0, -1, -1]
+[0, -1, 0]
+[0, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down, :down]
+[0, -1, 0]
+[0, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down, :down, :down]
+[0, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down, :down, :down, :right]
+[0, 0]
+[0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down, :down, :down, :right, :right]
+[0]
+[0]
+"--------------------------------------------------------------------------------"
+[true, [:right, :right, :down, :down, :down, :right, :right, :down]]
+[]
+[0, 0, 0, -1, 0]
+[-1, 0, 0, -1, -1]
+[0, 0, 0, -1, 0]
+[-1, 0, -1, 0, 0]
+[0, 0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right]
+[0, 0, -1, 0]
+[0, 0, -1, -1]
+[0, 0, -1, 0]
+[0, -1, 0, 0]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right]
+[0, -1, 0]
+[0, -1, -1]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down]
+[0, -1, -1]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :right, :down, :down]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down]
+[0, 0, -1, -1]
+[0, 0, -1, 0]
+[0, -1, 0, 0]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :right]
+[0, -1, -1]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :right, :down]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :down]
+[0, 0, -1, 0]
+[0, -1, 0, 0]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :down, :right]
+[0, -1, 0]
+[-1, 0, 0]
+[-1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :down, :down]
+[0, -1, 0, 0]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+[:right, :down, :down, :down, :down]
+[0, -1, 0, 0]
+"--------------------------------------------------------------------------------"
+false
+ #+end_example
+
+ This is similar to the Towers of Hanoi ;-)
+
+ Incidentally, by actually returning the path that proves it's possible to go
+ from the top left to the bottom right, we can solve a similar problem...
+
+ ...Given a matrix of chars and a target string, check whether the matrix
+ contains the target string by only going right or down, starting at the top
+ left.
 
 * Reads
 
