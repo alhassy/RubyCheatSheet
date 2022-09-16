@@ -1,0 +1,519 @@
+#+title: Ruby on Rails Reference Sheet
+# subtitle: /everything is an object!/
+#+macro: blurb  Reference of basic commands to get comfortable with Ruby ---Modern OOP!
+#+author: [[http://www.alhassy.com][Musa Al-hassy]]
+#+email: alhassy@gmail.com
+#+include: CheatSheet/CheatSheetSetup.org
+#+property: header-args :results replace value
+
+* Emacs
+
+#+begin_src emacs-lisp
+(system-packages-ensure "rails")
+
+(use-package lsp-mode
+  :hook  ;; Every programming mode should enter & start LSP, with which-key support
+  (ruby-mode . lsp-mode) ;; Enter LSP mode
+  (ruby-mode . lsp))      ;; Start LSP server
+
+
+;; Ruby LSP: Solargraph provides a comprehensive suite of tools for Ruby programming: intellisense, diagnostics, inline documentation, and type checking.
+;; gem install solargraph
+;; Note that there are additional Emacs LSP add-ons for Ruby, such as for adding extensive *static* type checking (via Sorbet)!
+
+;; gem install seeing_is_believing
+;; Displays the results of every line of code in your file
+;; Useful videos/etc: https://github.com/JoshCheek/seeing_is_believing
+(use-package seeing-is-believing)
+(add-hook 'ruby-mode-hook 'seeing-is-believing)
+;;
+;; Inline interpreter ᕦ( ᴼ ڡ ᴼ )ᕤ
+;; https://github.com/jcinnamond/seeing-is-believing
+;;
+;; (setq seeing-is-believing-prefix "C-.")
+;; C-. s ⇒ Evaluate everything in the current buffer; neato!
+;; C-. c ⇒ Clear out the output from seeing is believing
+;; C-. t - Tag a line to be “targeted” for evaluation by SiB
+;; C-. x - Run only the “tagged” lines (those with trailing “# => ” markers)
+;;
+;; For example, C-c ? s on the following shows three lines of output (｡◕‿◕｡):
+;; [*1..10]                 # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+;;   .select {|x| x.even?}  # => [2, 4, 6, 8, 10]
+;;   .map {|x| x / 2}       # => [1, 2, 3, 4, 5]
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; 🔥 https://develop.spacemacs.org/layers/+lang/ruby/README.html
+
+;; Quick automated code review of your changes
+;; https://github.com/julianrubisch/pronto.el
+
+
+;; https://crypt.codemancers.com/posts/2013-09-26-setting-up-emacs-as-development-environment-on-osx/
+;; https://lorefnon.me/2014/02/02/configuring-emacs-for-rails.html
+;; :FIRE: https://emacs.zeef.com/ehartc  [Look at the Ruby list]
+;; https://crypt.codemancers.com/posts/2013-09-26-setting-up-emacs-as-development-environment-on-osx/
+;; https://www.miskatonic.org/2021/05/29/prettifyruby/
+;; https://ict4g.net/adolfo/notes/emacs/my-ruby-setup-in-emacs.html
+;; https://github.com/bmaland/yasnippet-ruby-mode
+;; https://worace.works/2016/06/07/getting-started-with-emacs-for-ruby/
+
+;; inf-ruby The module bundles the inf-ruby package which allows you to run a Ruby REPL (e.g. irb or pry) in an Emacs buffer and interact with it from Ruby source buffers.
+;; yari The module bundles the yari package which allows you to search in Ruby's RI documentation. Use C-h R to invoke it.
+
+;; https://github.com/howardabrams/dot-files/blob/master/emacs-ruby.org
+#+end_src
+
+* Reads
+1. DONE. [[http://tutorials.jumpstartlab.com/projects/ruby_in_100_minutes.html][Ruby in 100 Minutes - Jumpstart Lab Curriculum]]
+   - This is really good!
+
+2. TODO. [[http://tutorials.jumpstartlab.com/projects/blogger.html][Blogger 2 - Jumpstart Lab Curriculum]]  ~ create a simple blog system and learn the basics of Ruby on Rails
+
+3. TODO. https://www.learnenough.com/ruby-on-rails-6th-edition-tutorial/toy_app
+
+4. TODO. [[https://rubyonrails.org/][Ruby on Rails — A web-app framework that includes everything needed to create
+   database-backed web applications according to the Model-View-Controller (MVC)
+   pattern.]] is the offical webpage and it contains a 30min video tutorial on
+   making a blog with RoR! TODO.
+
+5. [[https://www.freecodecamp.org/news/tag/ruby-on-rails/][Ruby on Rails - freeCodeCamp.org]]
+
+6. [[http://tutorials.jumpstartlab.com/][Tutorials - Jumpstart Lab Curriculum]] :fire:
+
+7. TODO. https://www.codecademy.com/learn/learn-rails
+   - Pay for the 7day free trial, and do everything in those 7 days!
+   - [[https://www.codecademy.com/learn/learn-ruby][Ruby Course]]
+
+8. https://guides.rubyonrails.org/getting_started.html
+9. https://www.educative.io/blog/ruby-on-rails
+10. https://www.theodinproject.com/
+
+* Ruby in 100 Minutes
+
+
+
+#+begin_src ruby
+# In Ruby, values have types ---variables don't have types.
+x = 12       # => 12
+x = "hello"  # => "hello"
+
+# Strings can be in 'single quotes' or in "double quotes".
+# Ruby interprets negative positions to count back from the end of the string.
+x = "Hello, " + 'world'    # => "Hello, world"
+tail = x[1..]              # => "ello, world"
+head = x[0]                # => "H"
+init = x[.. x.length - 2]  # => "Hello, worl"
+last = x[-1]               # => "d"
+world = x[-5..]            # => "world"
+segment = x[0..4]          # => "Hello"
+
+# Find and replace “sub”stitutions; gsub is global substations (‘replace all’).
+"aaa".sub('a', 'b')   # => "baa"
+"aaa".gsub('a', 'b')  # => "bbb"
+
+# String interpolation only works on a double-quoted string.
+name = 'Jasim'    # => "Jasim"
+"Hello, #{name}"  # => "Hello, Jasim"
+
+# Symbols are difficult to explain, they’re halfway between a string and a
+# number. You can recognize a symbol because it starts with a colon then one or
+# more letters, like :flag or :best_friend.
+
+# If you’re new to programming, think of a symbol as a stripped down string that
+# has barely any methods and no string interpolation. Compare the method list
+# for a proper string versus a similar symbol like this:
+"hello".methods.count  # => 183
+:hello.methods.count   # => 86
+
+# If you’re an experienced programmer, think of a symbol as a "named
+# integer". It doesn’t matter what actual value the symbol references. All we
+# care about is that any reference to that value within the VM will give back
+# the same value. Symbols are thus defined in a global symbol table and their
+# value cannot change.
+
+# Integers have a bunch of methods to help you do math-related things, which you can see by calling: 5.methods
+
+# Because Ruby’s integers are objects they have methods. One of those is the times method to repeat an instruction a set number of times.
+5.times do              # => 5
+  puts "Hello, World!"  # => nil, nil, nil, nil, nil
+end                     # => 5
+
+# Blocks are a powerful concept used frequently in Ruby. Think of them as a way of bundling up a set of instructions for use elsewhere.
+# They can be written using do/end or using {/} when they're shorter:
+5.times { puts "Hello!" }  # => 5
+
+# So what is a block actually used for? They’re a parameter passed into a method call.
+
+# Often our instructions within a block need to reference the value that they’re
+# currently working with. When we write the block we can specify a block
+# parameter inside pipe characters:
+
+5.times do |i|                    # => 5
+  puts "Hello, World #{'!' * i}"  # => nil, nil, nil, nil, nil
+end                               # => 5
+
+# NOTE In Ruby, all arguments are optional and default to ‘nil’. (Similar to JavaScript).
+# This is a very useful feature: It means we can omit arguments, and fallback to defaults, when it is sensible to do so.
+
+# Arrays
+meals = ["Breakfast", "Lunch", "Dinner"]  # => ["Breakfast", "Lunch", "Dinner"]
+meals[0]                                  # => "Breakfast"
+meals [1..]                               # => ["Lunch", "Dinner"]
+meals.sort                                # => ["Breakfast", "Dinner", "Lunch"]
+meals.join " then "                       # => "Breakfast then Lunch then Dinner"
+meals.include? "snack"                    # => false
+meals.collect {|m| m.upcase }             # => ["BREAKFAST", "LUNCH", "DINNER"]
+meals.shuffle                             # => ["Lunch", "Breakfast", "Dinner"]
+
+# Hashes.
+# A hash is an unordered collection where the data is organized into "key/value pairs".
+fridge = {"apples" => 3, "oranges" => 1, "carrots" => 12}  # => {"apples"=>3, "oranges"=>1, "carrots"=>12}
+fridge["carrots"]                                          # ⇒ 12 [ Read value associated with a given key ]
+fridge["pineapple"] = 1                                    # ⇒ 1 [ Add a new key-value pair ]
+fridge.keys                                                # => ["apples", "oranges", "carrots", "pineapple"]
+fridge.values                                              # => [3, 1, 12, 1]
+pairs = fridge.collect { |k, v| [k, v] }                   # => [["apples", 3], ["oranges", 1], ["carrots", 12], ["pineapple", 1]]
+original = pairs.to_h                                      # => {"apples"=>3, "oranges"=>1, "carrots"=>12, "pineapple"=>1}
+
+# When all the keys are symbols, then there is a shorthand
+fridge = {apples: 3, oranges: 1, carrots: 12}  # => {:apples=>3, :oranges=>1, :carrots=>12}
+# Notice that the keys end with a colon rather than beginning with one, even though these are symbols.
+
+# Conditionals
+#
+# Conditional statements evaluate to true or false. The most common conditional
+# operators are == (equal), > (greater than), >= (greater than or equal to), <
+# (less than), and <= (less than or equal to).
+1 == 2                   # => false
+true && false and false  # => false
+true || false or false   # => true
+#
+# The convention in Ruby is that a method which returns true or false should have a name ending in a ?.
+
+
+# nil is Ruby’s way of referring to "nothingness."
+#
+# If you have three pancakges, eat them all, then you might think you have
+# "nothing", but in terms of pancakes you have "0". Zero is something, it’s a
+# number, and it’s not nothing. You have an empty stack of pancakes, which is something.
+
+pancakes = [1, 2, 3]  # => [1, 2, 3]
+pancakes.pop          # => 3
+pancakes.pop          # => 2
+pancakes.pop          # => 1
+pancakes              # => []
+
+# However, what happens if you try to get a pancake from an empty plate?
+pancakes.pop  # => nil
+
+# nil is Ruby’s idea of nothingness. It’s usually encountered when you ask for something that doesn’t exist.
+# There are no more pancakes, so Ruby gave us nil. It isn’t that there’s a blank in that spot (""), it’s not a number 0, it’s nothingness – nil.
+
+# A large percentage of the errors you encounter while writing Ruby code will
+# involve nil. You thought something was there, you tried to do something to it,
+# and you can’t do something to nothing so Ruby raises an error.
+
+
+#Ruby is Object-Oriented
+
+# Ruby is an Object-Oriented programming language which means that all the
+# things we interact with inside the VM are objects. Each piece of data is an
+# object. Objects hold information, called attributes, and they can perform
+# actions, called methods. For an example of an object, think about you as a
+# human being. You have attributes like height, weight, and eye color. You have
+# methods like "walk", "run", "wash dishes", and "daydream." Different types of
+# objects have different attributes and methods.
+
+
+
+# In Object-Oriented programming we define classes, which are abstract
+# descriptions of a category or type of thing. It defines what attributes and
+# methods all objects of that type have.
+
+#   Defining a Class
+
+# For example, let’s think about modeling a school. We’d likely create a class
+# named Student that represents the abstract idea of a student. The Student
+# class would define attributes like first_name, last_name, and
+# primary_phone_number. It could define a method introduction that causes the
+# student to introduce themself.
+
+class Student
+  attr_accessor :first_name, :last_name, :primary_phone_number  # => nil
+
+  def introduction
+    puts "Hi, I'm #{first_name}!"  # => nil
+  end                              # => :introduction
+end                                # => :introduction
+
+# The class itself doesn’t represent a student, it’s the *idea* of what a
+# student is like. To represent an actual student we create an *instance* of that
+# class.
+
+jasim = Student.new  # => #<Student:0x00007f907b0382a8>
+
+# An instance is a realization of the abstract idea. It has actual data for the attributes.
+jasim.first_name = "Jasim"  # => "Jasim"
+jasim.introduction          # => nil
+
+# Functions
+#
+# NOTE In Ruby, all arguments TO BLOCKS are optional and default to ‘nil’. (Similar to JavaScript).
+# This is a very useful feature: It means we can omit arguments, and fallback to defaults, when it is sensible to do so.
+
+def go (name = "Musa", age = 30)
+  "My name is #{name}, and I am #{age}!"  # => "My name is Musa, and I am 30!", "My name is Jason, and I am 30!", "My name is Jason, and I am 25!"
+end                                       # => :go
+
+go              # => "My name is Musa, and I am 30!"
+go "Jason"      # => "My name is Jason, and I am 30!"
+go "Jason", 25  # => "My name is Jason, and I am 25!"
+
+# Likewise,
+def add (x, y)
+  x + y
+end             # => :add
+
+# add 1 # ⇒ ArgumentError: wrong number of arguments (given 1, expected 2)
+
+# In Ruby, every time you call a method you get a value back. By default, a Ruby method returns the value of the last expression it evaluated.
+#+end_src
+
+#+begin_src ruby
+                                                                                                                                    # >> Hello, World!
+                                                                                                                                    # >> Hello, World!
+                                                                                                                                    # >> Hello, World!
+                                                                                                                                    # >> Hello, World!
+                                                                                                                                    # >> Hello, World!
+                                                                                                                                    # >> Hello!
+                                                                                                                                    # >> Hello!
+                                                                                                                                    # >> Hello!
+                                                                                                                                    # >> Hello!
+                                                                                                                                    # >> Hello!
+                                                                                                                                    # >> Hello, World
+                                                                                                                                    # >> Hello, World !
+                                                                                                                                    # >> Hello, World !!
+                                                                                                                                    # >> Hello, World !!!
+                                                                                                                                    # >> Hello, World !!!!
+                                                                                                                                    # >> Hi, I'm Jasim!
+
+#+end_src
+
+* Hello world! ~ Let's create a simple blog system
+
+Ruby on Rails is a web framework that makes it easy to build powerful web apps
+in a short amount of time.
+
+Let's build a working Rails app that displays the Rails default page.
+#+begin_src shell
+gem install rails          # Get Rails
+rails new MySite           # Make a new app with lots of files/folders/defaults
+cd MySite; bundle install  # Install all the packages our new app needs
+rails server               # Start a server to preview the app in the browser
+#+end_src
+
+Then, view the Rails app in the browser by visiting http://localhost:3000 in the
+browser.
+
+- Ruby software packages are called *gems* and they are listed in the file *Gemfile*.
+- ~gem~: Interact with the package manager for the Ruby programming language.
+- ~rails~: A server-side MVC framework written in Ruby.
+- ~bundle~: Dependency manager for the Ruby programming language.
+
+* ~rails new~ creates a bunch of files
+
+Part of the reason Ruby on Rails became popular quickly is that it takes a lot
+of the hard work off your hands, and that’s especially true in starting up a
+project. Rails practices the idea of "sensible defaults" and will, with one
+command, create a working application ready for your customization.
+
+We have these folders:
+
++ app :: This is where 98% of your effort will go. It contains subfolders which
+  will hold most of the code you write including Models, Controllers, Views,
+  Helpers, JavaScript, etc.
+
++ bin :: This is where your app’s executables are stored: bundle, rails, rake,
+  and spring.
+
++ config :: Control the environment settings for your application. It also
+  includes the initializers subfolder which holds items to be run on startup.
+
+  For example, database configuration parameters would be entered into
+  =config/database.yml=. Since we’re using SQLite3 and starting from scratch, we
+  can leave the defaults to create a new database, which will happen
+  automatically. The database will be stored in =db/development.sqlite3=.
+
++ db :: Will eventually have a migrations subfolder where your migrations, used
+  to structure the database, will be stored. When using SQLite3, as is the Rails
+  default, the database file will also be stored in this folder.
+
++ lib :: This folder is to store code you control that is reusable outside the
+  project.
+
++ log :: Log files, one for each environment (development, test, production)
+
++ public :: Static files can be stored and accessed from here, but all the
+  interesting things (JavaScript, Images, CSS) have been moved up to *app* since
+  Rails 3.1
+
++ test :: If your project is using the default ~Test::Unit~ testing library, the
+  tests will live here
+
++ tmp :: Temporary cached files
+
++ vendor :: Infrequently used, this folder is to store code you /do not
+  control/. With Bundler and Rubygems, we generally don’t need anything in here
+  during development.
+
+* Blog Articles
+
+Our blog will be centered around "articles," so we’ll need a table in the
+database to store all the articles and a model to allow our Rails app to work
+with that data. We’ll use one of Rails’ generators to create the required files.
+
+#+begin_src shell
+# Run the “generate” script to make a “model” that is named “Article”
+rails generate model Article
+#+end_src
+
+Rails creates the following files:
+
++ =db/migrate/(some_time_stamp)_create_articles.rb= : A database migration to create the articles table
++ =app/models/article.rb= : The file that will hold the model code
++ =test/models/article_test.rb= : A file to hold unit tests for Article
++ =test/fixtures/articles.yml= : A fixtures file to assist with unit testing
+
+/Rails uses *migration files* to perform modifications to the database./ Almost any
+modification you can make to a DB can be done through a migration. The killer
+feature about Rails migrations is that they’re generally database agnostic. When
+developing applications developers might use SQLite3 as we are in this tutorial,
+but in production we’ll use PostgreSQL. Many others choose MySQL. It doesn’t
+matter – the same migrations will work on all of them! This is an example of how
+Rails takes some of the painful work off your hands. You write your migrations
+once, then run them against almost any database.
+
+What is a migration?
+- Let’s open =db/migrate/(some_time_stamp)_create_articles.rb= and take a
+  look. First you’ll notice that the filename begins with a mish-mash of numbers
+  which is a timestamp of when the migration was created. Migrations need to be
+  ordered, so the timestamp serves to keep them in chronological order. Inside
+  the file, you’ll see just the method =change=.
+- Migrations used to have two methods, =up= and =down=. The =up= was used to make your
+  change, and the =down= was there as a safety valve to undo the change. But this
+  usually meant a bunch of extra typing, so with Rails 3.1 those two were
+  replaced with =change=.
+- We write =change= migrations just like we used to write =up=, but Rails will
+  figure out the undo operations for us automatically.
+
+
+* Running the Migration
+
+Connect to your SQLite database and confirm that it's empty, say by running the
+command ~cd MySite; sqlite3 db/development.sqlite3~ then running the ~.tables~
+command to see all tables ---which should be 0.
+
+Now run your migration with this command:
+#+begin_src shell
+rake db:migrate
+#+end_src
+
+This command starts the rake program which is a ruby utility for running
+maintenance-like functions on your application (working with the DB, executing
+unit tests, deploying to a server, etc).
+
+We tell rake to db:migrate which means "look in your set of functions for the
+database (db) and run the migrate function." The migrate action finds all
+migrations in the db/migrate/ folder, looks at a special table in the DB to
+determine which migrations have and have not been run yet, then runs any
+migration that hasn’t been run.
+
+Now run ~.tables~ in a ~sqlite3~ session and you'll see
+
+Now run ~sqlite3 db/development.sqlite3~ then run ~.tables~ to see
+that our database now has 3 tables:
+1. ~schema_migrations~ keeps track of which migrations have been run.
+2. ~ar_internal_metadata~ keeps track of our environment, e.g., that we're on
+   development (not test nor production).
+3. ~articles~ is our new table resulting from our migration; it is for records
+   with an ~id, title, body, created_at, updated_at~ fields.
+
+   You’ll recognize most of them from your migration file, but what about =id=?
+   Every table you create with a migration will automatically have an id column
+   which serves as the table’s primary key. When you want to find a specific
+   article, you’ll look it up in the articles table by its unique ID
+   number. Rails and the database work together to make sure that these IDs are
+   unique, usually using a special column type in the DB called "serial".
+
+* Working with a Model in the Rails Console
+
+The Rails Console is a command-line interface to your application. It allows you
+to access and work with just about any part of your application directly instead
+of going through the web interface and clicking around.
+
+#+begin_src shell
+rails console
+#+end_src
+
+You’re now inside an irb interpreter with full access to your application. Let’s try some experiments.
+Enter each of these commands one at a time and observe the results:
+#+begin_src shell
+irb(main):004:0> 1 + 2 # We can evaluate Ruby expressions
+=> 3
+
+irb(main):001:0> Article.all # We can see all "article" records in the database
+   (2.2ms)  SELECT sqlite_version(*)
+  Article Load (0.8ms)  SELECT "articles".* FROM "articles"
+=> []
+
+irb(main):002:0> Article.new # We can make a new "article" object
+=> #<Article:0x00007fb031070ba0 id: nil, title: nil, body: nil, created_at: nil, updated_at: nil>
+#+end_src
+
+Where's the code for our ~Article~ class that specifies what attributes such
+objects should have?  It's in ~app/models/article.rb~, but this 2-line file is
+mostly empty!
+
+There are no attributes defined inside the model, so how does Rails know that an
+=Article= should have a title, a body, etc? The answer is a technique called
+reflection. Rails queries the database, looks at the =articles= table, and assumes
+that whatever columns that table has should be the attributes for the model.
+
+In your console, try entering =Article.all= again. Do you see the blank article
+that we created with the =Article.new= command? No? The console doesn’t change
+values in the database until we explicitly call the =.save= method on an
+object. Let’s create a sample article and you’ll see how it works. Enter each of
+the following lines one at a time:
+
+#+begin_src shell
+a = Article.new
+a.title = "Sample Article Title"
+a.body = "This is the text for my article, woo hoo!"
+a.save
+Article.all
+#+end_src
+
+You can see the new record in the console as well as by using a database tool
+like DBeaver or the sqlite3 command.
+
+* The Request/Response Cycle :CodeAcademy_Paid:
+
+*“The Request/Response Cycle”* What happens when we enter a URL in a browser?
+1. The browser makes a *request* for that URL.
+2. The Rails router (~config/routes.rb~) sees the URL and passes it to an
+   appropriate controller.
+3. The *controller* processes the request; then passes it to the *view*.
+4. The view renders the page as HTML, which you can see on the browser.
+
+As such, we need 3 pieces to build a Rails App: a controller, a route, and a view.
+
+Let's start by creating a controller.
+#+begin_src shell
+cd MySite; rails generate controller Pages
+#+end_src
+
+Now we open =MySite/app/controllers/pages_controller.rb=. Within the class
+=PagesController=, add an empty method =def home; end=.
